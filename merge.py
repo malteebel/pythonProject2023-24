@@ -1,9 +1,7 @@
 import os
 
 # Define path of all my pgns
-path = r'C:\Users\Malte\Desktop\PythonChessBot\chess_data'
-# Define path of all of Justins pgns
-path_justin = r'C:\Users\Malte\Desktop\PythonChessBot\justin_chess_data'
+path = r'C:\Users\Malte\Desktop\PythonChessBot\pythonProject2023-24\chess_data'
 
 # get relative paths of all files inside the directory
 pgn_paths = os.listdir(path)
