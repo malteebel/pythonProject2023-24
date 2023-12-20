@@ -1,7 +1,13 @@
+"""
+This script gathers all the downloaded chess data from chess.com and 
+merges them into a single file named game_list.pgn for easier 
+preprocessing
+"""
+
 import os
 
 # Define path of all my pgns
-path = r'C:\Users\Malte\Desktop\PythonChessBot\pythonProject2023-24\chess_data'
+path = r'..\pythonProject2023-24\chess_data'
 
 # get relative paths of all files inside the directory
 pgn_paths = os.listdir(path)
