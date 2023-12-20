@@ -13,7 +13,7 @@ Python Project WiSe 2023/2024
 
 **Recreate board states from move sequences** -> In progress
 
--> recreate board states -> In  progress (Franzi)
+-> boardstates.py -> In  progress (Franzi)
 
 **Training**
 
