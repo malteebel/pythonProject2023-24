@@ -1,13 +1,12 @@
-"""
-
+"""This Script takes the list of all games and returns all moves played 
+(including move number)
 """
 import re
 
 path = 'game_list.pgn'
 
 def seperate_games(pgn_path):
-    """
-    This function takes a pgn file of combined games, reads it and splits
+    """This function takes a pgn file of combined games, reads it and splits
     it into a list of games 
 
     Args:
@@ -30,8 +29,7 @@ def seperate_games(pgn_path):
 
 
 def seperate_moves(game):
-    """
-    This function takes a single game and extracts all the moves in a format like this:
+    """This function takes a single game and extracts all the moves in a format like this:
     '1. e4 e6', '2. c4 d5'
 
     Args:
