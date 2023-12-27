@@ -25,5 +25,5 @@ for i in range(len(pgn_paths)):
 merged_string = ''.join(full_content)
 
 # Writes all combined content to a new file
-with open('chess_data\game_list.pgn', 'w') as f:
+with open("chess_data\game_list.pgn", "w") as f:
     f.write(merged_string)

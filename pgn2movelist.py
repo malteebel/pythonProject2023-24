@@ -5,7 +5,7 @@ game(including move number)
 """
 import re
 
-path = 'game_list.pgn'
+path = "chess_data\game_list.pgn"
 
 def separate_games(pgn_path):
     """
@@ -20,7 +20,7 @@ def separate_games(pgn_path):
     """
 
     # Opens pgn of all games and loads it into content
-    with open(pgn_path, 'r') as f:
+    with open(pgn_path, "r") as f:
         content = f.read()
     
     # Uses non greedy matching to only match one game at a time
@@ -92,10 +92,10 @@ for i, game in enumerate(games):
     moves = separate_moves(game)
 
     # Filenames for EACH game with enumeration
-    new_path = f"all_games\game_{i+1}.pgn"
+    new_path = f"chess_data\all_games\game_{i+1}.pgn"
 
     # Write moves of all games to DIFFERENT files called game_{i}.pgn
-    with open(new_path, 'w') as f:
+    with open(new_path, "w") as f:
         for move in moves:
             f.write(move + "\n")
 
@@ -106,6 +106,6 @@ for i, game in enumerate(games):
 all_moves = [move for game in games for move in separate_moves(game)]
 
 # Writes all moves with a new line into a new file called movelist.pgn 
-with open('move_list.pgn', 'w') as f:
+with open("chess_data\move_list.pgn", "w") as f:
     for move in all_moves:
         f.write(move + "\n")

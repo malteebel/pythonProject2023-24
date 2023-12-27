@@ -153,12 +153,12 @@ def states_from_pgn(pgn_path):
 
 # This chunk creates all_states list with representations from all 
 # games
-path = r"all_games"
+path = r"chess_data\all_games"
 all_states = []
 
 for i in range(len(os.listdir(path))):
 
-    current_file =  f"all_games\game_{i+1}.pgn"
+    current_file =  f"chess_data\\all_games\game_{i+1}.pgn"
     board_states = states_from_pgn(current_file)
 
     all_states.append(board_states)
