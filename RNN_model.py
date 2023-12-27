@@ -10,7 +10,8 @@ class ChessRNN(tf.keras.Model):
     # Define init function to override inheritance of parents init 
     # function so we can add optimizer and depth
     def __init__(self, optimizer, depth):
-        """Initializes subclass of tf.keras.Model class, also creates 
+        """
+        Initializes subclass of tf.keras.Model class, also creates 
         metrics for model optimization
 
         Args:
@@ -51,7 +52,8 @@ class ChessRNN(tf.keras.Model):
     # Use tf.function to increase speed
     @tf.function
     def call(self, x):
-        """Activates the model and feeds information forward through
+        """
+        Activates the model and feeds information forward through
         the layers
 
         Args:
@@ -72,7 +74,8 @@ class ChessRNN(tf.keras.Model):
 
     @tf.function
     def train_step(self, data):
-        """Calculates the output and adjusts weights based on loss of
+        """
+        Calculates the output and adjusts weights based on loss of
         one forward computation
 
         Args:
