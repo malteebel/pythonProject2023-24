@@ -1,12 +1,15 @@
-"""This Script takes the list of all games and returns all moves played 
-(including move number)
+"""
+This Script takes the list of all games and creates new files, 
+one with all moves played total and one file with moves for each 
+game(including move number)
 """
 import re
 
 path = 'game_list.pgn'
 
-def seperate_games(pgn_path):
-    """This function takes a pgn file of combined games, reads it and splits
+def separate_games(pgn_path):
+    """
+    This function takes a pgn file of combined games, reads it and splits
     it into a list of games 
 
     Args:
@@ -28,12 +31,13 @@ def seperate_games(pgn_path):
     return games
 
 
-def seperate_moves(game):
-    """This function takes a single game and extracts all the moves in a format like this:
+def separate_moves(game):
+    """
+    This function takes a single game and extracts all the moves in a format like this:
     '1. e4 e6', '2. c4 d5'
 
     Args:
-        game (string): A single chess.com game most likely from the seperate_games function
+        game (string): A single chess.com game most likely from the separate_games function
 
     Returns:
         combined_moves (list): list of all combined moves including move number
@@ -78,15 +82,28 @@ def seperate_moves(game):
 
 
 
-# Seperate all games
-games = seperate_games(path)
+# Separate all games
+games = separate_games(path)
+
+
+# Creates a file for EACH game
+for i, game in enumerate(games):
+    # Extract moves from the game
+    moves = separate_moves(game)
+
+    # Filenames for EACH game with enumeration
+    new_path = f"all_games\game_{i+1}.pgn"
+
+    # Write moves of all games to DIFFERENT files called game_{i}.pgn
+    with open(new_path, 'w') as f:
+        for move in moves:
+            f.write(move + "\n")
+
+
 
 # BAM double list comprehension, get all the moves from all games into
-# one variable
-all_moves = [move for game in games for move in seperate_moves(game)]
-print(all_moves)
-
-
+# ONE variable
+all_moves = [move for game in games for move in separate_moves(game)]
 
 # Writes all moves with a new line into a new file called movelist.pgn 
 with open('move_list.pgn', 'w') as f:
