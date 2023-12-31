@@ -92,7 +92,7 @@ for i, game in enumerate(games):
     moves = separate_moves(game)
 
     # Filenames for EACH game with enumeration
-    new_path = f"chess_data\all_games\game_{i+1}.pgn"
+    new_path = f"chess_data\\all_games\game_{i+1}.pgn"
 
     # Write moves of all games to DIFFERENT files called game_{i}.pgn
     with open(new_path, "w") as f:

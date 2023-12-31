@@ -33,20 +33,26 @@ class ChessRNN(tf.keras.Model):
             tf.keras.metrics.Mean(name="test_loss"),
             tf.keras.metrics.CategoricalAccuracy(name="test_acc")]
         
-        # Set Catrgorical Crossentropy as loss function
-        self.loss_function = tf.keras.losses.CategoricalCrossentropy()
+        # ERROR FUNCTION
+        # Set MSE as loss function
+        # Can also try MSLE and MAE
+        # MAYBE Squared Error Per Element is better
+        self.loss_function = tf.keras.losses.MeanSquaredError()
+
+        # Add an input layer to avoid shape errors
+        self.input_layer = tf.keras.layers.InputLayer(input_shape=12*8*8)
 
         # Initialize a list that can contain all layers for depth arg
         self.layer_list = []
 
         # Build model based on depth
         for _ in range(depth):
-            # LSTM layers with tanh activation
-            layer = tf.keras.layers.LSTM(units=6*8*8, activation="tanh")
+            # Dense layers with relu activation
+            layer = tf.keras.layers.Dense(units=64, activation="relu")
             self.layer_list.append(layer)
 
-        # Output layer with softmax activation
-        self.out = tf.keras.layers.Dense(6*8*8, activation="softmax")
+        # Output layer with sigmoid activation
+        self.out = tf.keras.layers.Dense(12*8*8, activation="sigmoid")
 
 
     # Use tf.function to increase speed
@@ -59,6 +65,7 @@ class ChessRNN(tf.keras.Model):
         Args:
             x (tensor): data, all board states
         """
+        
         # Go through layer list depending on depth
         for layer in self.layer_list:
             x = layer(x)

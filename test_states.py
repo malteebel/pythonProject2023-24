@@ -5,6 +5,7 @@ import numpy as np
 import random
 import chess
 import chess.pgn
+from sklearn.model_selection import train_test_split
 
 def random_board(max_depth=50):
     """
@@ -65,10 +66,10 @@ def split_dims(board):
         board (chess.Board()): board state
 
     Returns:
-        board6d (list (nested)): Stacked matrix of all piecemaps
+        board12d (list (nested)): Stacked matrix of all piecemaps
     """
     # Inits all maps as empty
-    board6d = np.zeros((6, 8, 8), dtype=np.float32)
+    board12d = np.zeros((12, 8, 8), dtype=np.int64)
 
     # Iterate through all pieces 
     for piece in chess.PIECE_TYPES:
@@ -78,24 +79,24 @@ def split_dims(board):
             # into an actual coordinate 
             idx = np.unravel_index(square, (8, 8))
             # Assigns 1 to piece
-            board6d[piece - 1][7 - idx[0]][idx[1]] = 1
+            board12d[piece - 1][7 - idx[0]][idx[1]] = 1
 
         # For all squares that the piece is on and its black
         for square in board.pieces(piece, chess.BLACK):
             idx = np.unravel_index(square, (8, 8))
-            # Assigns -1 to piece
-            board6d[piece - 1][7 - idx[0]][idx[1]] = -1
+            # Assigns 1 to piece
+            board12d[piece + 5][7 - idx[0]][idx[1]] = 1
 
     # Returns the stacked matrix
-    return board6d
+    return board12d
 
-def merge_dims(board6d):
+def merge_dims(board12d):
     """
     Merges 6 dimensional board representation into a chess.Board() 
     board
 
     Args:
-        board6d (list (nested)): 6d board representation
+        board12d (list (nested)): 6d board representation
 
     Returns:
         board (chess.Board()): visual board representation
@@ -107,16 +108,21 @@ def merge_dims(board6d):
     for piece in chess.PIECE_TYPES:
         # Iterate through all rows and colums while accessing the 
         # layer corresponding to the piece type
-        for row_idx, row in enumerate(board6d[piece - 1]):
+        for row_idx, row in enumerate(board12d[piece - 1]):
             for col_idx, val in enumerate(row):
                 # White pieces
                 if val == 1:
                     square = chess.square(col_idx, 7 - row_idx)
                     board.set_piece_at(square, chess.Piece(piece, chess.WHITE))
-                # Black pieces
-                elif val == -1:
-                    square = chess.square(col_idx, 7 - row_idx)
-                    board.set_piece_at(square, chess.Piece(piece, chess.BLACK))
+
+        # Black pieces
+        for row_idx, row in enumerate(board12d[piece + 5]):
+                    for col_idx, val in enumerate(row):
+                        # Black pieces
+                        if val == 1:
+                            square = chess.square(col_idx, 7 - row_idx)
+                            board.set_piece_at(square, chess.Piece(piece, chess.BLACK))
+
     
     # Returns a chess.Board() board
     return board
@@ -150,6 +156,19 @@ def states_from_pgn(pgn_path):
 
     return board_states
 
+# NEEDS DOCUMENTATION
+def create_datasets(all_states):
+    inputs = []
+    targets = []
+
+    for game in all_states:
+        game_states_12d = [split_dims(board) for board in game]
+        for i in range(0, len(game_states_12d) - 1, 2):
+            inputs.append(game_states_12d[i])
+            targets.append(game_states_12d[i + 1])
+
+    return inputs, targets
+
 
 # This chunk creates all_states list with representations from all 
 # games
@@ -162,3 +181,13 @@ for i in range(len(os.listdir(path))):
     board_states = states_from_pgn(current_file)
 
     all_states.append(board_states)
+
+
+
+# This creates the datasets
+inputs, targets = create_datasets(all_states)
+
+# This splits the datasets into Training and Testing
+train_x, test_x, train_y, test_y = train_test_split(inputs, targets, test_size=0.2)
+
+
