@@ -69,7 +69,7 @@ def split_dims(board):
         board12d (list (nested)): Stacked matrix of all piecemaps
     """
     # Inits all maps as empty
-    board12d = np.zeros((12, 8, 8), dtype=np.int64)
+    board12d = np.zeros((12, 8, 8), dtype=np.float32)
 
     # Iterate through all pieces 
     for piece in chess.PIECE_TYPES:
@@ -188,6 +188,6 @@ for i in range(len(os.listdir(path))):
 inputs, targets = create_datasets(all_states)
 
 # This splits the datasets into Training and Testing
-train_x, test_x, train_y, test_y = train_test_split(inputs, targets, test_size=0.2)
+x_train, x_test, y_train, y_test = train_test_split(inputs, targets, test_size=0.2)
 
 
