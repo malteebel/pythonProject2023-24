@@ -4,10 +4,15 @@ Python Project WiSe 2023/2024
 **Scripts**
 
 -> boardstates.py (Franzi)
+
 -> merge.py (Malte)
+
 -> model.py (Malte)
+
 -> pgn2movelist.py (Malte)
+
 -> test_states.py (Malte)
+
 -> training.py (Malte)
 
 **Data**
