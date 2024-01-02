@@ -100,7 +100,6 @@ for i, game in enumerate(games):
             f.write(move + "\n")
 
 
-
 # BAM double list comprehension, get all the moves from all games into
 # ONE variable
 all_moves = [move for game in games for move in separate_moves(game)]
