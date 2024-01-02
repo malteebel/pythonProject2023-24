@@ -2,9 +2,9 @@
 import tensorflow as tf
 
 # Check for GPU support and Cuda/cuDNN installation
-print(tf.config.list_physical_devices('GPU'))
+# print(tf.config.list_physical_devices('GPU'))
 
-class ChessRNN(tf.keras.Model):
+class ChessANN(tf.keras.Model):
     """This class inherits all traits from the tf.keras.Model class"""
 
     # Define init function to override inheritance of parents init 
@@ -19,9 +19,9 @@ class ChessRNN(tf.keras.Model):
             depth (int): number of LSTM cells
         """
 
-        # Make the ChessRNN class inherit all methods and properties 
+        # Make the ChessANN class inherit all methods and properties 
         # from the tf.keras.Model class
-        super(ChessRNN, self).__init__()
+        super(ChessANN, self).__init__()
 
         # Set optimizer in class
         self.optimizer = optimizer
@@ -39,9 +39,6 @@ class ChessRNN(tf.keras.Model):
         # MAYBE Squared Error Per Element is better
         self.loss_function = tf.keras.losses.MeanSquaredError()
 
-        # Add an input layer to avoid shape errors
-        self.input_layer = tf.keras.layers.InputLayer(input_shape=12*8*8)
-
         # Initialize a list that can contain all layers for depth arg
         self.layer_list = []
 
@@ -54,9 +51,12 @@ class ChessRNN(tf.keras.Model):
         # Output layer with sigmoid activation
         self.out = tf.keras.layers.Dense(12*8*8, activation="sigmoid")
 
+        # Add a reshape layer to change the output shape to 12x8x8
+        self.reshape = tf.keras.layers.Reshape((12, 8, 8))
+
 
     # Use tf.function to increase speed
-    @tf.function
+    # @tf.function
     def call(self, x):
         """
         Activates the model and feeds information forward through
@@ -65,13 +65,17 @@ class ChessRNN(tf.keras.Model):
         Args:
             x (tensor): data, all board states
         """
-        
+        x = tf.reshape(x,  [-1, 12*8*8])
+
         # Go through layer list depending on depth
         for layer in self.layer_list:
             x = layer(x)
         
         # Finally feed through output layer
         x = self.out(x)
+        x = self.reshape(x)
+
+        return x
 
     def reset_metrics(self):
         """Reset all the metrics, can be used after every epoch"""
@@ -79,7 +83,7 @@ class ChessRNN(tf.keras.Model):
         for metric in self.metrics:
             metric.reset_states()
 
-    @tf.function
+    # @tf.function
     def train_step(self, data):
         """
         Calculates the output and adjusts weights based on loss of
