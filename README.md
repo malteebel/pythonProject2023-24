@@ -27,11 +27,9 @@ Every pgn file in the all_games folder contains all moves in the same notation o
 
 **Data handling**
 
-First download data from Chess.com from one player with the desired color. Then use the merge.py to merge all games
+First download data from Chess.com from one player with the desired piece color. Then use the merge.py to merge all games.
+
 -> merge.py (Malte)
-
-
-**Preprocessing into sequences of moves**
 
 -> pgn2movelist.py (Malte)
 
@@ -40,15 +38,19 @@ First download data from Chess.com from one player with the desired color. Then 
 
 -> boardstates.py -> In  progress (Franzi)
 
+OR for now
+
+-> test_states.py (Malte)
+
 **Model**
 
-Input: flattened 6\*8\*8 board representations
+Input: flattened 12\*8\*8 board representations
 
--> RNN_model.py (Malte)
+-> model.py (Malte)
 
-Output layer activation: Softmax
+Output layer activation: Sigmoid
 Output layer shape: 6\*8\*8
-Loss: Categorical Crossentropy
+Loss: MSE (for now) or Element Wise Squared Error
 
 **Training**
 
