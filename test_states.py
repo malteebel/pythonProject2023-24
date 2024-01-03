@@ -76,7 +76,7 @@ def split_dims(board):
         # For all squares that the pice is on and its white
         for square in board.pieces(piece, chess.WHITE):
             # np.unravel_index turns memory coordinate back 
-            # into an actual coordinate 
+            # into an actual coordinate -> turns 1d-index into 2d 8x8 index
             idx = np.unravel_index(square, (8, 8))
             # Assigns 1 to piece
             board12d[piece - 1][7 - idx[0]][idx[1]] = 1
@@ -172,16 +172,25 @@ def create_datasets(all_states):
 
 # This chunk creates all_states list with representations from all 
 # games
+<<<<<<< Updated upstream
 path = "chess_data/all_games"
+=======
+path = r"/Users/franziska-marieplate/Documents/5. Semester/Python/Chess/pythonProject2023-24/chess_data/all_games"
+>>>>>>> Stashed changes
 all_states = []
 
 for i in range(len(os.listdir(path))):
 
+<<<<<<< Updated upstream
     current_file =  f"chess_data/all_games/game_{i+1}.pgn"
+=======
+    current_file =  f"/Users/franziska-marieplate/Documents/5. Semester/Python/Chess/pythonProject2023-24/chess_data/all_games/game_{i+1}.pgn"
+>>>>>>> Stashed changes
     board_states = states_from_pgn(current_file)
 
     all_states.append(board_states)
 
+<<<<<<< Updated upstream
 
 
 # This creates the datasets
@@ -191,3 +200,6 @@ inputs, targets = create_datasets(all_states)
 x_train, x_test, y_train, y_test = train_test_split(inputs, targets, test_size=0.2)
 
 
+=======
+print(all_states)
+>>>>>>> Stashed changes
