@@ -1,11 +1,9 @@
 """
-This Script takes the list of all games and creates new files, 
-one with all moves played total and one file with moves for each 
-game(including move number)
+This Script includes the two main functions for preprocessing,
+seperate_games and seperate_moves which can further seperate and 
+clean the downloaded games. Mainly the regexes are in this script.
 """
 import re
-
-path = "chess_data\game_list.pgn"
 
 def separate_games(pgn_path):
     """
@@ -81,30 +79,3 @@ def separate_moves(game):
     return combined_moves
 
 
-
-# Separate all games
-games = separate_games(path)
-
-
-# Creates a file for EACH game
-for i, game in enumerate(games):
-    # Extract moves from the game
-    moves = separate_moves(game)
-
-    # Filenames for EACH game with enumeration
-    new_path = f"chess_data\\all_games\game_{i+1}.pgn"
-
-    # Write moves of all games to DIFFERENT files called game_{i}.pgn
-    with open(new_path, "w") as f:
-        for move in moves:
-            f.write(move + "\n")
-
-
-# BAM double list comprehension, get all the moves from all games into
-# ONE variable
-all_moves = [move for game in games for move in separate_moves(game)]
-
-# Writes all moves with a new line into a new file called movelist.pgn 
-with open("chess_data\move_list.pgn", "w") as f:
-    for move in all_moves:
-        f.write(move + "\n")
