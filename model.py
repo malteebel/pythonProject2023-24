@@ -1,30 +1,32 @@
 """Script containing the class of the model and all the parameters"""
+
 import tensorflow as tf
 
-# Check for GPU support and Cuda/cuDNN installation
-# print(tf.config.list_physical_devices('GPU'))
-
+# Add class that inherits from tf.keras.Model class
 class ChessANN(tf.keras.Model):
     """This class inherits all traits from the tf.keras.Model class"""
 
     # Define init function to override inheritance of parents init 
-    # function so we can add optimizer and depth
-    def __init__(self, optimizer, depth):
+    # function
+    def __init__(self):
         """
         Initializes subclass of tf.keras.Model class, also creates 
         metrics for model optimization
-
-        Args:
-            optimizer (string): Optimizer being used for training
-            depth (int): number of LSTM cells
         """
 
         # Make the ChessANN class inherit all methods and properties 
         # from the tf.keras.Model class
         super(ChessANN, self).__init__()
 
+        # OPTIMIZER
         # Set optimizer in class
-        self.optimizer = optimizer
+        self.optimizer = tf.keras.optimizers.Adam()
+
+        # ERROR FUNCTION
+        # Set MSE as loss function
+        # Can also try MSLE and MAE
+        # MAYBE Squared Error Per Element is better
+        self.loss_function = tf.keras.losses.MeanSquaredError()
 
         # Set metrics in class
         self.metrics_list = [
@@ -32,31 +34,28 @@ class ChessANN(tf.keras.Model):
             tf.keras.metrics.CategoricalAccuracy(name="train_acc"),
             tf.keras.metrics.Mean(name="test_loss"),
             tf.keras.metrics.CategoricalAccuracy(name="test_acc")]
-        
-        # ERROR FUNCTION
-        # Set MSE as loss function
-        # Can also try MSLE and MAE
-        # MAYBE Squared Error Per Element is better
-        self.loss_function = tf.keras.losses.MeanSquaredError()
 
-        # Initialize a list that can contain all layers for depth arg
-        self.layer_list = []
-
-        # Build model based on depth
-        for _ in range(depth):
-            # Dense layers with relu activation
-            layer = tf.keras.layers.Dense(units=64, activation="relu")
-            self.layer_list.append(layer)
+        # Define model
+        self.layer_1 = tf.keras.layers.Dense(units=64, activation="relu")
+        self.layer_2 = tf.keras.layers.Dense(units=128, activation="relu")
+        self.layer_3 = tf.keras.layers.Dense(units=256, activation="relu")
+        self.dropout_4 = tf.keras.layers.Dropout(rate=0.2)
+        self.batch_norm_5 = tf.keras.layers.BatchNormalization()
+        self.layer_6 = tf.keras.layers.Dense(units=64, activation="relu")
+        self.layer_7 = tf.keras.layers.Dense(units=128, activation="relu")
+        self.layer_8 = tf.keras.layers.Dense(units=256, activation="relu")
+        self.dropout_9 = tf.keras.layers.Dropout(rate=0.2)
+        self.batch_norm_10 = tf.keras.layers.BatchNormalization()
 
         # Output layer with sigmoid activation
-        self.out = tf.keras.layers.Dense(12*8*8, activation="sigmoid")
+        self.out_11 = tf.keras.layers.Dense(12*8*8, activation="sigmoid")
 
         # Add a reshape layer to change the output shape to 12x8x8
-        self.reshape = tf.keras.layers.Reshape((12, 8, 8))
+        self.reshape_12 = tf.keras.layers.Reshape((12, 8, 8))
 
 
     # Use tf.function to increase speed
-    # @tf.function
+    @tf.function
     def call(self, x):
         """
         Activates the model and feeds information forward through
@@ -65,15 +64,24 @@ class ChessANN(tf.keras.Model):
         Args:
             x (tensor): data, all board states
         """
-        x = tf.reshape(x,  [-1, 12*8*8])
 
-        # Go through layer list depending on depth
-        for layer in self.layer_list:
-            x = layer(x)
+        # Ensure correct input shape
+        x = tf.reshape(x,  [-1, 12*8*8])
         
-        # Finally feed through output layer
-        x = self.out(x)
-        x = self.reshape(x)
+        x = self.layer_1(x)
+        x = self.layer_2(x)
+        x = self.layer_3(x)
+        x = self.dropout_4(x)
+        x = self.batch_norm_5(x)
+        x = self.layer_6(x)
+        x = self.layer_7(x)
+        x = self.layer_8(x)
+        x = self.dropout_9(x)
+        x = self.batch_norm_10(x)
+        
+        # Finally feed through output layer and reshape
+        x = self.out_11(x)
+        x = self.reshape_12(x)
 
         return x
 
@@ -83,7 +91,7 @@ class ChessANN(tf.keras.Model):
         for metric in self.metrics:
             metric.reset_states()
 
-    # @tf.function
+    @tf.function
     def train_step(self, data):
         """
         Calculates the output and adjusts weights based on loss of

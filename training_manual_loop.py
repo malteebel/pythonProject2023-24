@@ -1,24 +1,27 @@
-# Load the TensorBoard notebook extension
-
 import tensorflow as tf
+from keras.callbacks import EarlyStopping
 import tqdm
 import datetime
-from model import *
+from model import ChessANN
 
-def training_loop(optimizer, depth, train_ds, test_ds, epochs, config_name):
+def training_loop_man(train_ds, test_ds, epochs, config_name):
 
+    # Time for logging
     time = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
 
-    train_log_path = f"logs\{config_name}\{time}\\train"
-    test_log_path = f"logs\{config_name}\{time}\\val"
+    # Log paths for tensorboard
+    train_log_path = f"logs/{config_name}/{time}/train"
+    test_log_path = f"logs/{config_name}/{time}/val"
 
-    # Summary writers
+    # Summary writers for metrics
     train_summary_writer = tf.summary.create_file_writer(train_log_path)
     test_summary_writer = tf.summary.create_file_writer(test_log_path)
 
+    
 
-    # Init model
-    model = ChessANN(optimizer, depth)
+
+    # Initialize and ?build? model
+    model = ChessANN()
     model.build(input_shape=(12, 8, 8))
 
     for epoch in range(epochs):
@@ -26,7 +29,7 @@ def training_loop(optimizer, depth, train_ds, test_ds, epochs, config_name):
 
         # Training
         for data in tqdm.tqdm(train_ds):
-            metrics = model.train_step(data)
+            model.metrics = model.train_step(data)
 
             # Logging metrics to log file for tensorboard
             with train_summary_writer.as_default():
@@ -42,7 +45,7 @@ def training_loop(optimizer, depth, train_ds, test_ds, epochs, config_name):
 
         # Testing
         for data in test_ds:
-            metrics = model.test_step(data)
+            model.metrics = model.test_step(data)
 
             # Logging metrics to log file for tensorboard
             with test_summary_writer.as_default():
@@ -59,8 +62,7 @@ def training_loop(optimizer, depth, train_ds, test_ds, epochs, config_name):
     print("\n")
 
     # Saves model
-    model.save(f"models\DEPTH_{depth}_EPOCHS{epochs}_{time}"
-               , save_format="tf")
+    # model.save(f"models\EPOCHS{epochs}_{time}", save_format="tf")
 
 
 
