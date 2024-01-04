@@ -1,5 +1,7 @@
+import re
+import numpy as np
 
-
+print(ord("a"))
 test = dict()
 test["category"] = dict()
 test["category"]["a"] = ["1", "3"]
@@ -80,9 +82,8 @@ state = "Running"
 
 white = True
 
-def makeMove(notation):
+def makeMove(notation, white=True):
       global Board
-      global white
       global state
       legend = dict()
       legend["Q"] = "Queen"
@@ -135,8 +136,8 @@ def makeMove(notation):
 
             elif figure == "Q":
                   for key in keysList:
+                        blocked = False
                         if (abs(ord(notation[-2]) - ord(b["Queen"][key][0])) == abs(int(notation[-1]) - int(b["Queen"][key][1]))):
-                              blocked = False
                               for coordinate in coordinates:
                                     file = coordinate[0]
                                     rank = coordinate[1]
@@ -151,11 +152,11 @@ def makeMove(notation):
                         if blocked == False:
                               b["Queen"][key] = [notation[-2], notation[-1]]
                               return
-      if "=" in notation:
-            number = int(b[legend[notation[-1]]].keys()[-1][-1])+1
-            b[legend[notation[-1]]][legend[notation[-1]]+str(number)] = [notation[-4], notation[-3]]
       if notation[-1] in ["#", "+", "!", "?"]:
             notation = notation[:-1]
+      if "=" in notation:
+            number = int(list(b[legend[notation[-1]]].keys())[-1][-1])+1
+            b[legend[notation[-1]]][legend[notation[-1]]+str(number)] = [notation[-4], notation[-3]]
       if notation == "0-1":
             state = "Lost"
             return
@@ -165,13 +166,14 @@ def makeMove(notation):
       if notation == "1/2-1/2":
             state = "Draw"
             return
-      if notation == "0-0":
-            b["King"][0] = "g"
-            b["Rook2"][0] = "f"
+      if notation == "O-O":
+            b["King"]["King1"][0] = "g"
+            b["Rook"]["Rook2"][0] = "f"
+            print("rochade")
             return
-      if notation == "0-0-0":
-            b["King"][0] = "c"
-            b["Rook1"][0] = "d"
+      if notation == "O-O-O":
+            b["King"]["King1"][0] = "c"
+            b["Rook"]["Rook1"][0] = "d"
             return
       if "x" in notation:
             beaten = False
@@ -181,12 +183,12 @@ def makeMove(notation):
                   for piece in bo[figure].keys():
                         #if we have a promotion, the coordinates of the beaten figure are at a different location
                         if "=" in notation:
-                              if Board[color][figure][piece] == [notation[-4], notation[-3]]:
-                                    Board[color][figure][piece] = ["0", "0"]
+                              if bo[figure][piece] == [notation[-4], notation[-3]]:
+                                    bo[figure][piece] = ["0", "0"]
                                     beaten = True
                                     break      
-                        if Board[color][figure][piece] == [notation[-2], notation[-1]]:
-                              Board[color][figure][piece] = ["0", "0"]
+                        if bo[figure][piece] == [notation[-2], notation[-1]]:
+                              bo[figure][piece] = ["0", "0"]
                               beaten = True
                               break
             if beaten == False:
@@ -194,8 +196,8 @@ def makeMove(notation):
                         if beaten == True: break
                         for piece in bo[figure].keys():
                               #check for an en passé
-                              if Board[color][figure][piece] == [notation[-2], chr(int(notation[-1]) - mirror)]:
-                                    Board[color][figure][piece] = ["0", "0"]
+                              if bo[figure][piece] == [notation[-2], chr(int(notation[-1]) - mirror)]:
+                                    bo[figure][piece] = ["0", "0"]
                                     beaten = True
                                     break
             if beaten == False:
@@ -215,11 +217,10 @@ def makeMove(notation):
       if len(notation) == 3:
             #if we want to move the king, we can move him directly since there is only one per side
             if notation[0] == "K":
-                  b["King"] = [notation[1], notation[2]]
+                  b["King"]["King1"] = [notation[1], notation[2]]
                   return
             #otherwise, we have to use our findFigure function to find the respective figure we want to move
             else:
-                  print(legend[notation[0]])
                   findFigure(b[legend[notation[0]]].keys(), notation[0])
                   return
       if len(notation) == 4:
@@ -227,14 +228,14 @@ def makeMove(notation):
             if "=" in notation:
                   for key in b["Pawn"].keys():
                   #match the file
-                        if b["Pawn"][key][0] == notation[0] and b["Pawn"][key][1] == (notation[1] - mirror):
+                        if b["Pawn"][key][0] == notation[0] and b["Pawn"][key][1] == str((int(notation[1]) - mirror)):
                               b["Pawn"][key] == ["0", "0"]
                               return        
             if "x" in notation:
                   if notation[0].isupper():
                         #if we want to move the king, we can move him directly since there is only one per side
                         if notation[0] == "K":
-                              b["King"] = [notation[1], notation[2]]
+                              b["King"]["King1"] = [notation[1], notation[2]]
                               return
                         #otherwise, we have to use our findFigure function to find the respective figure we want to move
                         else:
@@ -266,6 +267,15 @@ def makeMove(notation):
                   findFigure(keys, notation[0])
                   return 
       if len(notation) < 7:
+            if "=" in notation:
+                  print("Success1")
+                  for key in b["Pawn"].keys():
+                  #match the file
+                        print(b["Pawn"][key][0], notation[0], b["Pawn"][key][1], int(notation[3])-mirror)
+                        if b["Pawn"][key][0] == notation[0] and b["Pawn"][key][1] == str((int(notation[3]) - mirror)):
+                              b["Pawn"][key] == ["0", "0"]
+                              print("Success!")
+                              return 
             #in this case, a figure is double-ambigious
             for key in b[legend[notation[0]]].keys():
                   if b[legend[notation[0]]][key] == [notation[1], notation[2]]:
@@ -275,10 +285,40 @@ def makeMove(notation):
       print("error, notation invalid")
       return
 
-
+def getData(path, white=True):
+      mCounter = 0
+      stateList = []
+      global Board
+      if white == True:
+            encoding = 1
+      else:
+            encoding = -1
+      with open(path, 'r') as pgn_file:
+            tokens = []
+            for line in pgn_file:
+            # Process each line here
+                  line = line.strip()
+                  tokens.append(re.findall(" [^ ]*", line))
+      for token in tokens:
+            for turn in token:
+                  boardMatrix = np.zeros((12,8,8))
+                  print(turn[1:])
+                  mCounter = 0
+                  makeMove(turn[1:], white)
+                  for color in Board.keys():
+                        for figure in Board[color].keys():
+                              for piece in Board[color][figure].values():
+                                    if piece[0] != "0":
+                                          boardMatrix[mCounter][8 - int(piece[1])][ord(piece[0]) - 97] = 1 * encoding
+                              mCounter += 1
+                        encoding = encoding * -1
+                  stateList.append(boardMatrix)
+                  white = (white == False)
+      return(stateList)
+      
 
 #test
-makeMove("h4")
+"""makeMove("h4")
 makeMove("e5")
 makeMove("a4")
 makeMove("b5")
@@ -290,4 +330,7 @@ makeMove("axb5")
 makeMove("d5")
 makeMove("Rxa5")
 makeMove("Bb7")
-print(Board.items())
+"""
+#print(Board.items())
+
+getData("/Users/franziska-marieplate/Documents/5. Semester/Python/Chess/pythonProject2023-24/chess_data/all_games/game_1.pgn")
