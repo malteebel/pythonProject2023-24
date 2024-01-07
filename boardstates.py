@@ -109,7 +109,7 @@ def makeMove(notation, white=True):
       def findFigure(keysList, figure):
             if figure == "N":
                   for key in keysList:
-                        if(((abs(ord(notation[1]) - ord(b["Knight"][key][0])) == 1) and (abs(int(notation[2]) - int(b["Knight"][key][1])) == 2)) or ((abs(ord(notation[1]) - ord(b["Knight"][key][0])) == 2) and (abs(int(notation[2]) - int(b["Knight"][key][1])) == 1))):
+                        if(((abs(ord(notation[-2]) - ord(b["Knight"][key][0])) == 1) and (abs(int(notation[-1]) - int(b["Knight"][key][1])) == 2)) or ((abs(ord(notation[-2]) - ord(b["Knight"][key][0])) == 2) and (abs(int(notation[-1]) - int(b["Knight"][key][1])) == 1))):
                               b["Knight"][key] = [notation[-2], notation[-1]]
                               return
             elif figure == "B":
@@ -126,13 +126,14 @@ def makeMove(notation, white=True):
                                     return
             elif figure == "R":
                   for key in keysList:
-                        blocked = False
-                        for coordinate in coordinates:
-                              if (coordinate[0] == b["Rook"][key][0] and int(coordinate[1]) < max(int(b["Rook"][key][1]), int(notation[-1])) and int(coordinate[1]) > min(int(b["Rook"][key][1]), int(notation[-1]))) or (coordinate[1] == b["Rook"][key][1] and ord(coordinate[0]) < max(ord(b["Rook"][key][0]), ord(notation[-2])) and ord(coordinate[0]) > min(ord(b["Rook"][key][0]), ord(notation[-2]))):
-                                    blocked = True
-                        if blocked == False:
-                              b["Rook"][key] = [notation[-2], notation[-1]]
-                              return
+                        if notation[-2] in b["Rook"][key] or notation[-1] in b["Rook"][key]:
+                              blocked = False
+                              for coordinate in coordinates:
+                                    if (coordinate[0] == b["Rook"][key][0] and int(coordinate[1]) < max(int(b["Rook"][key][1]), int(notation[-1])) and int(coordinate[1]) > min(int(b["Rook"][key][1]), int(notation[-1]))) or (coordinate[1] == b["Rook"][key][1] and ord(coordinate[0]) < max(ord(b["Rook"][key][0]), ord(notation[-2])) and ord(coordinate[0]) > min(ord(b["Rook"][key][0]), ord(notation[-2]))):
+                                          blocked = True
+                              if blocked == False:
+                                    b["Rook"][key] = [notation[-2], notation[-1]]
+                                    return
 
             elif figure == "Q":
                   for key in keysList:
@@ -207,10 +208,13 @@ def makeMove(notation, white=True):
          for key in b["Pawn"].keys():
               #match the file
               if b["Pawn"][key][0] == notation[0]:
+                   print("success1")
                    #see if the goal is within reach, if we use black we have to mirror the distance for black
                    if ((int(b["Pawn"][key][1]) - int(notation[1])) * mirror) in [-1, -2]:
+                        print("success2")
                         #see if there is any pawn in the way, mirror distance to blocking pawn for black
                         if [b["Pawn"][key][0], str(int(b["Pawn"][key][1])+mirror)] not in coordinates:
+                             print("success3")
                              #move pawn to respective field
                              b["Pawn"][key] = [notation[0], notation[1]]
                              return
@@ -235,7 +239,7 @@ def makeMove(notation, white=True):
                   if notation[0].isupper():
                         #if we want to move the king, we can move him directly since there is only one per side
                         if notation[0] == "K":
-                              b["King"]["King1"] = [notation[1], notation[2]]
+                              b["King"]["King1"] = [notation[-2], notation[-1]]
                               return
                         #otherwise, we have to use our findFigure function to find the respective figure we want to move
                         else:
@@ -333,4 +337,4 @@ makeMove("Bb7")
 """
 #print(Board.items())
 
-getData("/Users/franziska-marieplate/Documents/5. Semester/Python/Chess/pythonProject2023-24/chess_data/all_games/game_1.pgn")
+getData("/Users/franziska-marieplate/Documents/5. Semester/Python/Chess/pythonProject2023-24/chess_data/all_games/game_2.pgn")
