@@ -13,75 +13,75 @@ Legend["Q"] = "Queen"
 Legend["B"] = "Bishop"
 Legend["R"] = "Rook"
 Legend["K"] = "King"
-Board = dict()
+board_original = dict()
 
-Board["White"] = dict()
+board_original["White"] = dict()
 
-Board["White"]["Pawn"] = dict()
-Board["White"]["Pawn"]["Pawn1"] = ["a", "2"]
-Board["White"]["Pawn"]["Pawn2"] = ["b", "2"]
-Board["White"]["Pawn"]["Pawn3"] = ["c", "2"]
-Board["White"]["Pawn"]["Pawn4"] = ["d", "2"]
-Board["White"]["Pawn"]["Pawn5"] = ["e", "2"]
-Board["White"]["Pawn"]["Pawn6"] = ["f", "2"]
-Board["White"]["Pawn"]["Pawn7"] = ["g", "2"]
-Board["White"]["Pawn"]["Pawn8"] = ["h", "2"]
+board_original["White"]["Pawn"] = dict()
+board_original["White"]["Pawn"]["Pawn1"] = ["a", "2"]
+board_original["White"]["Pawn"]["Pawn2"] = ["b", "2"]
+board_original["White"]["Pawn"]["Pawn3"] = ["c", "2"]
+board_original["White"]["Pawn"]["Pawn4"] = ["d", "2"]
+board_original["White"]["Pawn"]["Pawn5"] = ["e", "2"]
+board_original["White"]["Pawn"]["Pawn6"] = ["f", "2"]
+board_original["White"]["Pawn"]["Pawn7"] = ["g", "2"]
+board_original["White"]["Pawn"]["Pawn8"] = ["h", "2"]
 
-Board["White"]["Knight"] = dict()
-Board["White"]["Knight"]["Knight1"] = ["b", "1"]
-Board["White"]["Knight"]["Knight2"] = ["g", "1"]
+board_original["White"]["Knight"] = dict()
+board_original["White"]["Knight"]["Knight1"] = ["b", "1"]
+board_original["White"]["Knight"]["Knight2"] = ["g", "1"]
 
 
-Board["White"]["Bishop"] = dict()
-Board["White"]["Bishop"]["Bishop1"] = ["c", "1"]
-Board["White"]["Bishop"]["Bishop2"] = ["f", "1"]
+board_original["White"]["Bishop"] = dict()
+board_original["White"]["Bishop"]["Bishop1"] = ["c", "1"]
+board_original["White"]["Bishop"]["Bishop2"] = ["f", "1"]
 
-Board["White"]["Rook"] = dict()
-Board["White"]["Rook"]["Rook1"] = ["a", "1"]
-Board["White"]["Rook"]["Rook2"] = ["h", "1"]
+board_original["White"]["Rook"] = dict()
+board_original["White"]["Rook"]["Rook1"] = ["a", "1"]
+board_original["White"]["Rook"]["Rook2"] = ["h", "1"]
 
-Board["White"]["King"] = dict()
-Board["White"]["King"]["King1"] = ["e", "1"]
+board_original["White"]["King"] = dict()
+board_original["White"]["King"]["King1"] = ["e", "1"]
 
-Board["White"]["Queen"] = dict()
-Board["White"]["Queen"]["Queen1"] = ["d", "1"]
+board_original["White"]["Queen"] = dict()
+board_original["White"]["Queen"]["Queen1"] = ["d", "1"]
 
-Board["Black"] = dict()
+board_original["Black"] = dict()
 
-Board["Black"]["Pawn"] = dict()
-Board["Black"]["Pawn"]["Pawn1"] = ["a", "7"]
-Board["Black"]["Pawn"]["Pawn2"] = ["b", "7"]
-Board["Black"]["Pawn"]["Pawn3"] = ["c", "7"]
-Board["Black"]["Pawn"]["Pawn4"] = ["d", "7"]
-Board["Black"]["Pawn"]["Pawn5"] = ["e", "7"]
-Board["Black"]["Pawn"]["Pawn6"] = ["f", "7"]
-Board["Black"]["Pawn"]["Pawn7"] = ["g", "7"]
-Board["Black"]["Pawn"]["Pawn8"] = ["h", "7"]
+board_original["Black"]["Pawn"] = dict()
+board_original["Black"]["Pawn"]["Pawn1"] = ["a", "7"]
+board_original["Black"]["Pawn"]["Pawn2"] = ["b", "7"]
+board_original["Black"]["Pawn"]["Pawn3"] = ["c", "7"]
+board_original["Black"]["Pawn"]["Pawn4"] = ["d", "7"]
+board_original["Black"]["Pawn"]["Pawn5"] = ["e", "7"]
+board_original["Black"]["Pawn"]["Pawn6"] = ["f", "7"]
+board_original["Black"]["Pawn"]["Pawn7"] = ["g", "7"]
+board_original["Black"]["Pawn"]["Pawn8"] = ["h", "7"]
 
-Board["Black"]["Knight"] = dict()
-Board["Black"]["Knight"]["Knight1"] = ["b", "8"]
-Board["Black"]["Knight"]["Knight2"] = ["g", "8"]
+board_original["Black"]["Knight"] = dict()
+board_original["Black"]["Knight"]["Knight1"] = ["b", "8"]
+board_original["Black"]["Knight"]["Knight2"] = ["g", "8"]
 
-Board["Black"]["Bishop"] = dict()
-Board["Black"]["Bishop"]["Bishop1"] = ["c", "8"]
-Board["Black"]["Bishop"]["Bishop2"] = ["f", "8"]
+board_original["Black"]["Bishop"] = dict()
+board_original["Black"]["Bishop"]["Bishop1"] = ["c", "8"]
+board_original["Black"]["Bishop"]["Bishop2"] = ["f", "8"]
 
-Board["Black"]["Rook"] = dict()
-Board["Black"]["Rook"]["Rook1"] = ["a", "8"]
-Board["Black"]["Rook"]["Rook2"] = ["h", "8"]
+board_original["Black"]["Rook"] = dict()
+board_original["Black"]["Rook"]["Rook1"] = ["a", "8"]
+board_original["Black"]["Rook"]["Rook2"] = ["h", "8"]
 
-Board["Black"]["King"] = dict()
-Board["Black"]["King"]["King1"] = ["e", "8"]
+board_original["Black"]["King"] = dict()
+board_original["Black"]["King"]["King1"] = ["e", "8"]
 
-Board["Black"]["Queen"] = dict()
-Board["Black"]["Queen"]["Queen1"] = ["d", "8"]
+board_original["Black"]["Queen"] = dict()
+board_original["Black"]["Queen"]["Queen1"] = ["d", "8"]
 
 state = "Running"
 
-print(Board.keys())
+print(board_original.keys())
 
-def makeMove(notation, current_board = Board, white = True):
-     #global current_board
+def makeMove(notation, current_board_original = board_original, white = True):
+     #global current_board_original
       global state
       legend = dict()
       legend["Q"] = "Queen"
@@ -89,19 +89,19 @@ def makeMove(notation, current_board = Board, white = True):
       legend["B"] = "Bishop"
       legend["R"] = "Rook"
       coordinates = []
-      for color in current_board.keys():
-            for figure in current_board[color].keys():
-                  for piece in current_board[color][figure].values():
+      for color in current_board_original.keys():
+            for figure in current_board_original[color].keys():
+                  for piece in current_board_original[color][figure].values():
                         coordinates.append(piece)
     #check if black or white are playing, make them play alternately
       if white == True:
-            b = current_board["White"]
-            bo = current_board["Black"]
+            b = current_board_original["White"]
+            bo = current_board_original["Black"]
             white = False
             mirror = 1
       else:
-            b = current_board["Black"]
-            bo = current_board["White"]
+            b = current_board_original["Black"]
+            bo = current_board_original["White"]
             white = True
             mirror = -1
       def findFigure(keysList, figure):
@@ -109,7 +109,7 @@ def makeMove(notation, current_board = Board, white = True):
                   for key in keysList:
                         if(((abs(ord(notation[-2]) - ord(b["Knight"][key][0])) == 1) and (abs(int(notation[-1]) - int(b["Knight"][key][1])) == 2)) or ((abs(ord(notation[-2]) - ord(b["Knight"][key][0])) == 2) and (abs(int(notation[-1]) - int(b["Knight"][key][1])) == 1))):
                               b["Knight"][key] = [notation[-2], notation[-1]]
-                              return current_board
+                              return current_board_original
             elif figure == "B":
                   for key in keysList:
                         if (abs(ord(notation[-2]) - ord(b["Bishop"][key][0])) == abs(int(notation[-1]) - int(b["Bishop"][key][1]))):
@@ -121,7 +121,7 @@ def makeMove(notation, current_board = Board, white = True):
                                           blocked = True
                               if blocked == False:
                                     b["Bishop"][key] = [notation[-2], notation[-1]]
-                                    return current_board
+                                    return current_board_original
             elif figure == "R":
                   for key in keysList:
                         if notation[-2] in b["Rook"][key] or notation[-1] in b["Rook"][key]:
@@ -131,7 +131,7 @@ def makeMove(notation, current_board = Board, white = True):
                                           blocked = True
                               if blocked == False:
                                     b["Rook"][key] = [notation[-2], notation[-1]]
-                                    return current_board
+                                    return current_board_original
 
             elif figure == "Q":
                   for key in keysList:
@@ -144,13 +144,13 @@ def makeMove(notation, current_board = Board, white = True):
                                           blocked = True
                                     if blocked == False:
                                           b["Queen"][key] = [notation[-2], notation[-1]]
-                                          return current_board
+                                          return current_board_original
                         for coordinate in coordinates:
                               if (coordinate[0] == b["Queen"][key][0] and int(coordinate[1]) < max(int(b["Queen"][key][1]), int(notation[-1])) and int(coordinate[1]) > min(int(b["Queen"][key][1]), int(notation[-1]))) or (coordinate[1] == b["Queen"][key][1] and ord(coordinate[0]) < max(ord(b["Queen"][key][0]), ord(notation[-2])) and ord(coordinate[0]) > min(ord(b["Queen"][key][0]), ord(notation[-2]))):
                                     blocked = True
                         if blocked == False:
                               b["Queen"][key] = [notation[-2], notation[-1]]
-                              return current_board
+                              return current_board_original
       if notation[-1] in ["#", "+", "!", "?"]:
             notation = notation[:-1]
       if "=" in notation:
@@ -158,25 +158,25 @@ def makeMove(notation, current_board = Board, white = True):
             b[legend[notation[-1]]][legend[notation[-1]]+str(number)] = [notation[-4], notation[-3]]
       if notation == "0-1":
             state = "Lost"
-            return current_board
+            return current_board_original
       if notation == "1-0":
             state = "Win"
-            return current_board
+            return current_board_original
       if notation == "1/2-1/2":
             state = "Draw"
-            return current_board
+            return current_board_original
       if notation == "O-O":
             b["King"]["King1"][0] = "g"
             b["Rook"]["Rook2"][0] = "f"
             print("rochade")
-            return current_board
+            return current_board_original
       if notation == "O-O-O":
             b["King"]["King1"][0] = "c"
             b["Rook"]["Rook1"][0] = "d"
-            return current_board
+            return current_board_original
       if "x" in notation:
             beaten = False
-            #if that is the case, move the right figure to its goal field and remove the beaten figure from the board
+            #if that is the case, move the right figure to its goal field and remove the beaten figure from the board_original
             for figure in bo.keys():
                   if beaten == True: break
                   for piece in bo[figure].keys():
@@ -212,16 +212,16 @@ def makeMove(notation, current_board = Board, white = True):
                         if [b["Pawn"][key][0], str(int(b["Pawn"][key][1])+mirror)] not in coordinates:
                              #move pawn to respective field
                              b["Pawn"][key] = [notation[0], notation[1]]
-                             return current_board
+                             return current_board_original
       if len(notation) == 3:
             #if we want to move the king, we can move him directly since there is only one per side
             if notation[0] == "K":
                   b["King"]["King1"] = [notation[1], notation[2]]
-                  return current_board
+                  return current_board_original
             #otherwise, we have to use our findFigure function to find the respective figure we want to move
             else:
                   findFigure(b[legend[notation[0]]].keys(), notation[0])
-                  return current_board
+                  return current_board_original
       if len(notation) == 4:
             #check if we have a pawn promotion
             if "=" in notation:
@@ -229,23 +229,23 @@ def makeMove(notation, current_board = Board, white = True):
                   #match the file
                         if b["Pawn"][key][0] == notation[0] and b["Pawn"][key][1] == str((int(notation[1]) - mirror)):
                               b["Pawn"][key] = ["0", "0"]
-                              return current_board       
+                              return current_board_original       
             if "x" in notation:
                   if notation[0].isupper():
                         #if we want to move the king, we can move him directly since there is only one per side
                         if notation[0] == "K":
                               b["King"]["King1"] = [notation[-2], notation[-1]]
-                              return current_board
+                              return current_board_original
                         #otherwise, we have to use our findFigure function to find the respective figure we want to move
                         else:
                               findFigure(b[legend[notation[0]]].keys(), notation[0])
-                              return current_board
+                              return current_board_original
                   #if we have to move a pawn that beats another figure, we need to consider that it beats figures diagonally
                   else:
                        for key in b["Pawn"].keys():
                             if b["Pawn"][key][0] == notation[0] and (int(b["Pawn"][key][1]) + mirror) == int(notation[-1]):
                                  b["Pawn"][key] = [notation[-2], notation[-1]]
-                                 return current_board
+                                 return current_board_original
             else:
                   #in this case, the figure moved is ambigious, and we have to use the additional information provided by the notation
                   #check which Knight is within reach, and move it
@@ -254,7 +254,7 @@ def makeMove(notation, current_board = Board, white = True):
                         if notation[1] in b[legend[notation[0]]][key]:
                               keys.append(key)
                   findFigure(keys, notation[0])
-                  return current_board
+                  return current_board_original
                  
       if len(notation) == 5:
             #in this case, a figure beats another one and is ambigious
@@ -264,7 +264,7 @@ def makeMove(notation, current_board = Board, white = True):
                         if notation[1] in b[legend[notation[0]]][key]:
                               keys.append(key)
                   findFigure(keys, notation[0])
-                  return current_board 
+                  return current_board_original 
       if len(notation) < 7:
             if "=" in notation:
                   print("Success1")
@@ -274,21 +274,21 @@ def makeMove(notation, current_board = Board, white = True):
                         if b["Pawn"][key][0] == notation[0] and b["Pawn"][key][1] == str((int(notation[3]) - mirror)):
                               b["Pawn"][key] == ["0", "0"]
                               print("Success!")
-                              return current_board 
+                              return current_board_original 
             #in this case, a figure is double-ambigious
             for key in b[legend[notation[0]]].keys():
                   if b[legend[notation[0]]][key] == [notation[1], notation[2]]:
                         b[legend[notation[0]]][key] = [notation[-2], notation[-1]]
-                        return current_board                                   
+                        return current_board_original                                   
       #if we could not execute a move yet, an error seems to have occured
       print("error, notation invalid")
-      return current_board
+      return current_board_original
 
 def getData(path, white=True):
       mCounter = 0
       stateList = []
-      global Board
-      board = Board.copy()
+      global board_original
+      board_original = board_original.copy()
       if white == True:
             encoding = 1
       else:
@@ -301,18 +301,18 @@ def getData(path, white=True):
                   tokens.append(re.findall(" [^ ]*", line))
       for token in tokens:
             for turn in token:
-                  boardMatrix = np.zeros((12,8,8))
+                  board_originalMatrix = np.zeros((12,8,8))
                   print(turn[1:])
                   mCounter = 0
-                  board = makeMove(turn[1:], board, white)
-                  for color in board.keys():
-                        for figure in board[color].keys():
-                              for piece in board[color][figure].values():
+                  board_original = makeMove(turn[1:], board_original, white)
+                  for color in board_original.keys():
+                        for figure in board_original[color].keys():
+                              for piece in board_original[color][figure].values():
                                     if piece[0] != "0":
-                                          boardMatrix[mCounter][8 - int(piece[1])][ord(piece[0]) - 97] = 1 * encoding
+                                          board_originalMatrix[mCounter][8 - int(piece[1])][ord(piece[0]) - 97] = 1 * encoding
                               mCounter += 1
                         encoding = encoding * -1
-                  stateList.append(boardMatrix)
+                  stateList.append(board_originalMatrix)
                   white = (white == False)
       return(stateList)
       
@@ -331,7 +331,7 @@ makeMove("d5")
 makeMove("Rxa5")
 makeMove("Bb7")
 """
-#print(Board.items())
+#print(board_original.items())
 
-#getData("/Users/franziska-marieplate/Documents/5. Semester/Python/Chess/pythonProject2023-24/chess_data/all_games/game_1.pgn")
-getData("/chess_data/all_games/game_1.pgn")
+getData("/Users/franziska-marieplate/Documents/5. Semester/Python/Chess/pythonProject2023-24/chess_data/all_games/game_1.pgn")
+#getData("/chess_data/all_games/game_1.pgn")
