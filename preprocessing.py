@@ -1,4 +1,5 @@
-"""This script gathers all the downloaded chess data from chess.com 
+"""
+This script gathers all the downloaded chess data from chess.com 
 and merges them into a single file named game_list.pgn for easier 
 preprocessing.
 
