@@ -10,7 +10,7 @@ from sklearn.model_selection import train_test_split
 def random_board(max_depth=50):
     """
     This function can instantiate a random board configuration
-    starting from the opening position
+    starting from the opening position CURRENTLY UNUSED
 
     Args:
         max_depth (int, optional): Maximum amount of moves played on 
@@ -60,7 +60,7 @@ def random_board(max_depth=50):
 def split_dims(board):
     """Splits board into different piecemaps
 
-    Creates 6 boardstates containing only one type of piece
+    Creates 12 boardstates containing only one type of piece
 
     Args:
         board (chess.Board()): board state
@@ -92,7 +92,7 @@ def split_dims(board):
 
 def merge_dims(board12d):
     """
-    Merges 6 dimensional board representation into a chess.Board() 
+    Merges 12 dimensional board representation into a chess.Board() 
     board
 
     Args:
@@ -172,25 +172,16 @@ def create_datasets(all_states):
 
 # This chunk creates all_states list with representations from all 
 # games
-<<<<<<< Updated upstream
 path = "chess_data/all_games"
-=======
-path = r"/Users/franziska-marieplate/Documents/5. Semester/Python/Chess/pythonProject2023-24/chess_data/all_games"
->>>>>>> Stashed changes
 all_states = []
 
 for i in range(len(os.listdir(path))):
 
-<<<<<<< Updated upstream
     current_file =  f"chess_data/all_games/game_{i+1}.pgn"
-=======
-    current_file =  f"/Users/franziska-marieplate/Documents/5. Semester/Python/Chess/pythonProject2023-24/chess_data/all_games/game_{i+1}.pgn"
->>>>>>> Stashed changes
     board_states = states_from_pgn(current_file)
 
     all_states.append(board_states)
 
-<<<<<<< Updated upstream
 
 
 # This creates the datasets
@@ -198,8 +189,3 @@ inputs, targets = create_datasets(all_states)
 
 # This splits the datasets into Training and Testing
 x_train, x_test, y_train, y_test = train_test_split(inputs, targets, test_size=0.2)
-
-
-=======
-print(all_states)
->>>>>>> Stashed changes
