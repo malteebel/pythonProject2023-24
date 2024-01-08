@@ -299,8 +299,6 @@ def get_data(path, white=True):
       state_list = []
       #use the original boardstate before the first move
       global board_original
-      #specify which player is doing the current move
-      encoding = int(white)
       with open(path, 'r') as pgn_file:
             tokens = []
             for line in pgn_file:
@@ -318,9 +316,8 @@ def get_data(path, white=True):
                         for figure in board_original[color].keys():
                               for piece in board_original[color][figure].values():
                                     if piece[0] != "0":
-                                          board_matrix[m_counter][8 - int(piece[1])][ord(piece[0]) - 97] = 1 * encoding
+                                          board_matrix[m_counter][8 - int(piece[1])][ord(piece[0]) - 97] = 1
                               m_counter += 1
-                        encoding = encoding * -1
                   state_list.append(board_matrix)
                   white = (white == False)
       return(state_list)
