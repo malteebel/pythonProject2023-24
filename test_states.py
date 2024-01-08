@@ -5,7 +5,6 @@ import numpy as np
 import random
 import chess
 import chess.pgn
-from sklearn.model_selection import train_test_split
 
 def random_board(max_depth=50):
     """
@@ -55,7 +54,6 @@ def random_board(max_depth=50):
 
     # Return both boards
     return board, target_board
-
 
 def split_dims(board):
     """Splits board into different piecemaps
@@ -156,36 +154,29 @@ def states_from_pgn(pgn_path):
 
     return board_states
 
-# NEEDS DOCUMENTATION
-def create_datasets(all_states):
+def create_datasets(all_states, color="black"):
+    """
+    Creates datasets for inputs and targets from game states.
+
+    Args:
+    all_states (list): Tensor of all games and corresponding gamestates
+    color (str): The color to create datasets for
+
+    Returns:
+    All inputs and all targets spaced by one
+    """
+    # Empty list for inputs and targets
     inputs = []
     targets = []
+    if color == "black":
+        start = 0
+    elif color == "white":
+        start = 1
 
     for game in all_states:
         game_states_12d = [split_dims(board) for board in game]
-        for i in range(0, len(game_states_12d) - 1, 2):
+        for i in range(start, len(game_states_12d) - 1, 2):
             inputs.append(game_states_12d[i])
             targets.append(game_states_12d[i + 1])
 
     return inputs, targets
-
-
-# This chunk creates all_states list with representations from all 
-# games
-path = "chess_data/all_games"
-all_states = []
-
-for i in range(len(os.listdir(path))):
-
-    current_file =  f"chess_data/all_games/game_{i+1}.pgn"
-    board_states = states_from_pgn(current_file)
-
-    all_states.append(board_states)
-
-
-
-# This creates the datasets
-inputs, targets = create_datasets(all_states)
-
-# This splits the datasets into Training and Testing
-x_train, x_test, y_train, y_test = train_test_split(inputs, targets, test_size=0.2)
