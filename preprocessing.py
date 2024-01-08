@@ -12,62 +12,97 @@ now merged.
 """
 
 import os
+import tensorflow as tf
 from regex_functions import separate_games, separate_moves
+from test_states import split_dims, merge_dims, create_datasets, states_from_pgn
+from sklearn.model_selection import train_test_split
 
 
-# Define path of all my pgns
-path_downloaded_games = "chess_data/downloaded_games"
+def preprocessing(path_downloaded_games="chess_data/downloaded_games", color="black"):
+    """
+    Handles the preprocessing off the data 
 
-# Get relative paths of all files inside the directory
-pgn_paths = os.listdir(path_downloaded_games)
+    Args:
+        path_downloaded_games (str, optional): _description_. Defaults to "chess_data/downloaded_games".
+    """
 
-# Define empty list
-full_content = []
+    # Get relative paths of all files inside the directory
+    pgn_paths = os.listdir(path_downloaded_games)
 
-# Iterate through all the files
-# Open them and assign all their content to a variable
-for i in range(len(pgn_paths)):
-    with open(path_downloaded_games + '/' + pgn_paths[i], 'r') as f:
-        content = f.read()
-        full_content += content 
+    # Define empty list
+    full_content = []
 
-# Join all the content into one string
-merged_string = ''.join(full_content)
+    # Iterate through all the files
+    # Open them and assign all their content to a variable
+    for i in range(len(pgn_paths)):
+        with open(path_downloaded_games + '/' + pgn_paths[i], 'r') as f:
+            content = f.read()
+            full_content += content 
 
-# Writes all combined content to a new file
-with open("chess_data/game_list.pgn", "w") as f:
-    f.write(merged_string)
+    # Join all the content into one string
+    merged_string = ''.join(full_content)
 
-
-
-path_movelist = "chess_data/game_list.pgn"
-
-# Separate all games
-games = separate_games(path_movelist)
-
-# Create the new all_games directory
-games_dir = os.mkdir("chess_data/all_games")
+    # Writes all combined content to a new file
+    with open("chess_data/game_list.pgn", "w") as f:
+        f.write(merged_string)
 
 
-# Creates a file for EACH game
-for i, game in enumerate(games):
-    # Extract moves from the game
-    moves = separate_moves(game)
 
-    # Filenames for EACH game with enumeration
-    new_path = f"chess_data/all_games/game_{i+1}.pgn"
+    path_movelist = "chess_data/game_list.pgn"
 
-    # Write moves of all games to DIFFERENT files called game_{i}.pgn
-    with open(new_path, "w") as f:
-        for move in moves:
+    # Separate all games
+    games = separate_games(path_movelist)
+
+    # Create the new all_games directory
+    os.mkdir("chess_data/all_games")
+
+
+    # Creates a file for EACH game
+    for i, game in enumerate(games):
+        # Extract moves from the game
+        moves = separate_moves(game)
+
+        # Filenames for EACH game with enumeration
+        new_path = f"chess_data/all_games/game_{i+1}.pgn"
+
+        # Write moves of all games to DIFFERENT files called game_{i}.pgn
+        with open(new_path, "w") as f:
+            for move in moves:
+                f.write(move + "\n")
+
+
+    # BAM double list comprehension, get all the moves from all games into
+    # ONE variable
+    all_moves = [move for game in games for move in separate_moves(game)]
+
+    # Writes all moves with a new line into a new file called movelist.pgn 
+    with open("chess_data/move_list.pgn", "w") as f:
+        for move in all_moves:
             f.write(move + "\n")
 
 
-# BAM double list comprehension, get all the moves from all games into
-# ONE variable
-all_moves = [move for game in games for move in separate_moves(game)]
+    # This section creates the datasets for training
+    # This chunk creates all_states list with representations from all 
+    # games
+    path = "chess_data/all_games"
+    all_states = []
 
-# Writes all moves with a new line into a new file called movelist.pgn 
-with open("chess_data/move_list.pgn", "w") as f:
-    for move in all_moves:
-        f.write(move + "\n")
+    for i in range(len(os.listdir(path))):
+
+        current_file =  f"chess_data/all_games/game_{i+1}.pgn"
+        board_states = states_from_pgn(current_file)
+
+        all_states.append(board_states)
+
+
+
+    # This creates the datasets
+    inputs, targets = create_datasets(all_states, color)
+
+    # This splits the datasets into Training and Testing
+    x_train, x_test, y_train, y_test = train_test_split(inputs, targets, test_size=0.2)
+
+    train_ds = tf.data.Dataset.from_tensor_slices((x_train, y_train))
+    test_ds = tf.data.Dataset.from_tensor_slices((x_test, y_test))
+
+    return train_ds, test_ds
