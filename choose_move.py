@@ -1,17 +1,16 @@
 import numpy as np
-# Comment out until paths are fixed
-# import boardstates
+import preprocessing
+import boardstates
 import chess
 from test_states import split_dims
 
 
 # Franzis function
-# Malte: Why need color???
-def eval_moves(board, pred, white=True):
+def eval_moves(board, pred):
     legal_moves = list(board.legal_moves)
     legal_states = []
     for move in legal_moves:
-        legal_states.append(boardstates.makeMove(move, board, white))
+        legal_states.append(boardstates.make_move(move, preprocessing.split_dims(board), board.turn))
     all_dist = []
     for move in legal_moves:
         dist = np.linalg.norm(pred - move)
