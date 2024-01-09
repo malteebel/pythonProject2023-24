@@ -12,10 +12,10 @@ now merged.
 """
 
 import os
-import tensorflow as tf
+#import tensorflow as tf
 from regex_functions import separate_games, separate_moves
 from test_states import split_dims, merge_dims, create_datasets, states_from_pgn
-from sklearn.model_selection import train_test_split
+#from sklearn.model_selection import train_test_split
 
 
 def preprocessing(path_downloaded_games="chess_data/downloaded_games", color="black"):

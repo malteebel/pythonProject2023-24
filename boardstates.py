@@ -1,5 +1,6 @@
 import re
 import numpy as np
+import test_states
 
 
 #create an initial board state
@@ -30,11 +31,13 @@ board_original["White"]["Rook"] = dict()
 board_original["White"]["Rook"]["Rook1"] = ["a", "1"]
 board_original["White"]["Rook"]["Rook2"] = ["h", "1"]
 
+board_original["White"]["Queen"] = dict()
+board_original["White"]["Queen"]["Queen1"] = ["d", "1"]
+
 board_original["White"]["King"] = dict()
 board_original["White"]["King"]["King1"] = ["e", "1"]
 
-board_original["White"]["Queen"] = dict()
-board_original["White"]["Queen"]["Queen1"] = ["d", "1"]
+
 
 board_original["Black"] = dict()
 
@@ -60,17 +63,19 @@ board_original["Black"]["Rook"] = dict()
 board_original["Black"]["Rook"]["Rook1"] = ["a", "8"]
 board_original["Black"]["Rook"]["Rook2"] = ["h", "8"]
 
+board_original["Black"]["Queen"] = dict()
+board_original["Black"]["Queen"]["Queen1"] = ["d", "8"]
+
 board_original["Black"]["King"] = dict()
 board_original["Black"]["King"]["King1"] = ["e", "8"]
 
-board_original["Black"]["Queen"] = dict()
-board_original["Black"]["Queen"]["Queen1"] = ["d", "8"]
+
 
 #set the state of the game to running
 state = "Running"
 
 #define the make_move function, which changes the board state according to a move notation 
-def make_move(notation, current_board_original = board_original, white = True): 
+def make_move(notation, current_board = board_original, white = True): 
       global state
       #create a legend for the different figure encodings
       legend = dict()
@@ -80,19 +85,19 @@ def make_move(notation, current_board_original = board_original, white = True):
       legend["R"] = "Rook"
       #create a list with all currently occupied coordinates
       coordinates = []
-      for color in current_board_original.keys():
-            for figure in current_board_original[color].keys():
-                  for piece in current_board_original[color][figure].values():
+      for color in current_board.keys():
+            for figure in current_board[color].keys():
+                  for piece in current_board[color][figure].values():
                         coordinates.append(piece)
       #check if black or white are playing, and assign the variable b(= all fgures of the current player) and bo(= all figures of the other player) accordingly
       if white == True:
-            b = current_board_original["White"]
-            bo = current_board_original["Black"]
+            b = current_board["White"]
+            bo = current_board["Black"]
             white = False
             mirror = 1
       else:
-            b = current_board_original["Black"]
-            bo = current_board_original["White"]
+            b = current_board["Black"]
+            bo = current_board["White"]
             white = True
             mirror = -1
       #define a function to find the figure that is supposed to be moved
@@ -103,7 +108,7 @@ def make_move(notation, current_board_original = board_original, white = True):
                         #determine the right knight by checking its distance to the goal field
                         if(((abs(ord(notation[-2]) - ord(b["Knight"][key][0])) == 1) and (abs(int(notation[-1]) - int(b["Knight"][key][1])) == 2)) or ((abs(ord(notation[-2]) - ord(b["Knight"][key][0])) == 2) and (abs(int(notation[-1]) - int(b["Knight"][key][1])) == 1))):
                               b["Knight"][key] = [notation[-2], notation[-1]]
-                              return current_board_original
+                              return current_board
             #find the correct bishop
             elif figure == "B":
                   for key in keysList:
@@ -117,7 +122,7 @@ def make_move(notation, current_board_original = board_original, white = True):
                                           blocked = True
                               if blocked == False:
                                     b["Bishop"][key] = [notation[-2], notation[-1]]
-                                    return current_board_original
+                                    return current_board
             #find the correct rook
             elif figure == "R":
                   for key in keysList:
@@ -129,7 +134,7 @@ def make_move(notation, current_board_original = board_original, white = True):
                                           blocked = True
                               if blocked == False:
                                     b["Rook"][key] = [notation[-2], notation[-1]]
-                                    return current_board_original
+                                    return current_board
             #find the correct queen
             elif figure == "Q":
                   for key in keysList:
@@ -143,13 +148,13 @@ def make_move(notation, current_board_original = board_original, white = True):
                                           blocked = True
                                     if blocked == False:
                                           b["Queen"][key] = [notation[-2], notation[-1]]
-                                          return current_board_original
+                                          return current_board
                         for coordinate in coordinates:
                               if (coordinate[0] == b["Queen"][key][0] and int(coordinate[1]) < max(int(b["Queen"][key][1]), int(notation[-1])) and int(coordinate[1]) > min(int(b["Queen"][key][1]), int(notation[-1]))) or (coordinate[1] == b["Queen"][key][1] and ord(coordinate[0]) < max(ord(b["Queen"][key][0]), ord(notation[-2])) and ord(coordinate[0]) > min(ord(b["Queen"][key][0]), ord(notation[-2]))):
                                     blocked = True
                         if blocked == False:
                               b["Queen"][key] = [notation[-2], notation[-1]]
-                              return current_board_original
+                              return current_board
       #remove any additonal signs at the end of the notation
       if notation[-1] in ["#", "+", "!", "?"]:
             notation = notation[:-1]
@@ -160,26 +165,26 @@ def make_move(notation, current_board_original = board_original, white = True):
       #player lost the game
       if notation == "0-1":
             state = "Lost"
-            return current_board_original
+            return current_board
       #player won the game
       if notation == "1-0":
             state = "Win"
-            return current_board_original
+            return current_board
       #player has a draw
       if notation == "1/2-1/2":
             state = "Draw"
-            return current_board_original
+            return current_board
       #play the short rochade
       if notation == "O-O":
             b["King"]["King1"][0] = "g"
             b["Rook"]["Rook2"][0] = "f"
             print("rochade")
-            return current_board_original
+            return current_board
       #play the long rochade
       if notation == "O-O-O":
             b["King"]["King1"][0] = "c"
             b["Rook"]["Rook1"][0] = "d"
-            return current_board_original
+            return current_board
       #check if we are beating a figure in this turn
       if "x" in notation:
             beaten = False
@@ -221,16 +226,16 @@ def make_move(notation, current_board_original = board_original, white = True):
                         if [b["Pawn"][key][0], str(int(b["Pawn"][key][1])+mirror)] not in coordinates:
                              #move pawn to respective field
                              b["Pawn"][key] = [notation[0], notation[1]]
-                             return current_board_original
+                             return current_board
       if len(notation) == 3:
             #if we want to move the king, we can move him directly since there is only one per side
             if notation[0] == "K":
                   b["King"]["King1"] = [notation[1], notation[2]]
-                  return current_board_original
+                  return current_board
             #otherwise, we have to use our findFigure function to find the respective figure we want to move
             else:
                   findFigure(b[legend[notation[0]]].keys(), notation[0])
-                  return current_board_original
+                  return current_board
       if len(notation) == 4:
             #check if we have a pawn promotion
             if "=" in notation:
@@ -238,23 +243,23 @@ def make_move(notation, current_board_original = board_original, white = True):
                   #match the file
                         if b["Pawn"][key][0] == notation[0] and b["Pawn"][key][1] == str((int(notation[1]) - mirror)):
                               b["Pawn"][key] = ["0", "0"]
-                              return current_board_original       
+                              return current_board       
             if "x" in notation:
                   if notation[0].isupper():
                         #if we want to move the king, we can move him directly since there is only one per side
                         if notation[0] == "K":
                               b["King"]["King1"] = [notation[-2], notation[-1]]
-                              return current_board_original
+                              return current_board
                         #otherwise, we have to use our findFigure function to find the respective figure we want to move
                         else:
                               findFigure(b[legend[notation[0]]].keys(), notation[0])
-                              return current_board_original
+                              return current_board
                   #if we have to move a pawn that beats another figure, we need to consider that it beats figures diagonally
                   else:
                        for key in b["Pawn"].keys():
                             if b["Pawn"][key][0] == notation[0] and (int(b["Pawn"][key][1]) + mirror) == int(notation[-1]):
                                  b["Pawn"][key] = [notation[-2], notation[-1]]
-                                 return current_board_original
+                                 return current_board
             else:
                   #in this case, the figure moved is ambigious, and we have to use the additional information provided by the notation
                   #check which Knight is within reach, and move it
@@ -263,7 +268,7 @@ def make_move(notation, current_board_original = board_original, white = True):
                         if notation[1] in b[legend[notation[0]]][key]:
                               keys.append(key)
                   findFigure(keys, notation[0])
-                  return current_board_original
+                  return current_board
                  
       if len(notation) == 5:
             #in this case, a figure beats another one and is ambigious
@@ -274,7 +279,7 @@ def make_move(notation, current_board_original = board_original, white = True):
                               keys.append(key)
                   #after filtering for the figures that fulfill the specification noted in the notation, we use the findFigure function again
                   findFigure(keys, notation[0])
-                  return current_board_original
+                  return current_board
       if len(notation) < 7:
             if "=" in notation:
                   #in this case, we have a pawn promotion
@@ -282,15 +287,15 @@ def make_move(notation, current_board_original = board_original, white = True):
                   #check which pawn would be in reach of the goal field and remove him from the board
                         if b["Pawn"][key][0] == notation[0] and b["Pawn"][key][1] == str((int(notation[3]) - mirror)):
                               b["Pawn"][key] == ["0", "0"]
-                              return current_board_original 
+                              return current_board 
             #in this case, a figure is double-ambigious
             for key in b[legend[notation[0]]].keys():
                   if b[legend[notation[0]]][key] == [notation[1], notation[2]]:
                         b[legend[notation[0]]][key] = [notation[-2], notation[-1]]
-                        return current_board_original                                   
+                        return current_board                                   
       #if we could not execute a move yet, an error seems to have occured
       print("error, notation invalid")
-      return current_board_original
+      return current_board
 
 #function that takes a png file with a game notation and returns the resulting board states as one-hot encoded matrices
 def get_data(path, white=True):
@@ -318,6 +323,7 @@ def get_data(path, white=True):
                                     if piece[0] != "0":
                                           board_matrix[m_counter][8 - int(piece[1])][ord(piece[0]) - 97] = 1
                               m_counter += 1
+                  board_matrix = test_states.merge_dims(board_matrix)
                   state_list.append(board_matrix)
                   white = (white == False)
       return(state_list)
@@ -339,5 +345,5 @@ make_move("Bb7")
 """
 #print(board_original.items())
 
-get_data("/Users/franziska-marieplate/Documents/5. Semester/Python/Chess/pythonProject2023-24/chess_data/all_games/game_1.pgn")
+print(get_data("/Users/franziska-marieplate/Documents/5. Semester/Python/Chess/pythonProject2023-24/chess_data/all_games/game_1.pgn"))
 #getData("/chess_data/all_games/game_1.pgn")
