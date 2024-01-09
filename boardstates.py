@@ -1,6 +1,6 @@
 import re
 import numpy as np
-import test_states
+import dim_functions
 
 
 #create an initial board state
@@ -323,12 +323,15 @@ def get_data(path, white=True):
                                     if piece[0] != "0":
                                           board_matrix[m_counter][8 - int(piece[1])][ord(piece[0]) - 97] = 1
                               m_counter += 1
-                  board_matrix = test_states.merge_dims(board_matrix)
+                  board_matrix = dim_functions.merge_dims(board_matrix)
                   state_list.append(board_matrix)
                   white = (white == False)
       return(state_list)
       
 
+
+# Malte: commented that out
+'''
 #test
 """make_move("h4")
 make_move("e5")
@@ -347,3 +350,4 @@ make_move("Bb7")
 
 print(get_data("/Users/franziska-marieplate/Documents/5. Semester/Python/Chess/pythonProject2023-24/chess_data/all_games/game_1.pgn"))
 #getData("/chess_data/all_games/game_1.pgn")
+'''
