@@ -12,10 +12,11 @@ now merged.
 """
 
 import os
-#import tensorflow as tf
+import tensorflow as tf
 from regex_functions import separate_games, separate_moves
-from test_states import split_dims, merge_dims, create_datasets, states_from_pgn
-#from sklearn.model_selection import train_test_split
+from dim_functions import split_dims, create_datasets, states_from_pgn
+from boardstates import get_data
+from sklearn.model_selection import train_test_split
 
 
 def preprocessing(path_downloaded_games="chess_data/downloaded_games", color="black"):
@@ -23,7 +24,7 @@ def preprocessing(path_downloaded_games="chess_data/downloaded_games", color="bl
     Handles the preprocessing off the data 
 
     Args:
-        path_downloaded_games (str, optional): _description_. Defaults to "chess_data/downloaded_games".
+        path_downloaded_games (str): Defaults to "chess_data/downloaded_games".
     """
 
     # Get relative paths of all files inside the directory
@@ -81,7 +82,6 @@ def preprocessing(path_downloaded_games="chess_data/downloaded_games", color="bl
             f.write(move + "\n")
 
 
-    # This section creates the datasets for training
     # This chunk creates all_states list with representations from all 
     # games
     path = "chess_data/all_games"
@@ -90,7 +90,10 @@ def preprocessing(path_downloaded_games="chess_data/downloaded_games", color="bl
     for i in range(len(os.listdir(path))):
 
         current_file =  f"chess_data/all_games/game_{i+1}.pgn"
-        board_states = states_from_pgn(current_file)
+        # New function
+        board_states = get_data(current_file)
+        # Old function
+        # board_states = states_from_pgn(current_file)
 
         all_states.append(board_states)
 

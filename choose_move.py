@@ -2,7 +2,7 @@ import numpy as np
 import preprocessing
 import boardstates
 import chess
-from test_states import split_dims
+from dim_functions import split_dims
 
 
 # Franzis function

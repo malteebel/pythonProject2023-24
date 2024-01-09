@@ -1,8 +1,8 @@
 """Function to play with the loaded model"""
 import chess
 from model import ChessANN
-from test_states import split_dims
-from choose_move import get_best_move
+from dim_functions import split_dims
+from choose_move import get_best_move, eval_moves
 # Comment out until paths are fixed
 # from choose_move import eval_moves
 
@@ -39,6 +39,7 @@ def play(model_name, color="black"):
         pred = model_pred.predict(sliced)
         # Execute best move
         # Replace with Franzis function later
+        # board.push(eval_moves(board, pred))
         board.push(get_best_move(board, pred))
         print(board)
 
