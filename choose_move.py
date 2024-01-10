@@ -12,8 +12,8 @@ def eval_moves(board, pred):
     for move in legal_moves:
         legal_states.append(boardstates.make_move(move, preprocessing.split_dims(board), board.turn))
     all_dist = []
-    for move in legal_moves:
-        dist = np.linalg.norm(pred - move)
+    for state in legal_states:
+        dist = np.linalg.norm(pred - state)
         all_dist.append(dist)
     best_move = legal_moves[np.argmin(all_dist)]
     return(best_move)

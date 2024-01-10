@@ -1,6 +1,8 @@
 import re
 import numpy as np
 import dim_functions
+import copy
+
 
 
 #create an initial board state
@@ -73,9 +75,10 @@ board_original["Black"]["King"]["King1"] = ["e", "8"]
 
 #set the state of the game to running
 state = "Running"
-
+def get_range(num):
+      return range(0, num) if num >= 0 else range(num+1, 1)
 #define the make_move function, which changes the board state according to a move notation 
-def make_move(notation, current_board = board_original, white = True): 
+def make_move(notation, current_board, white = True): 
       global state
       #create a legend for the different figure encodings
       legend = dict()
@@ -100,15 +103,77 @@ def make_move(notation, current_board = board_original, white = True):
             bo = current_board["White"]
             white = True
             mirror = -1
+      def check_king2(position):
+            for key in bo["Bishop"].keys():
+                  #check if the goal field is on a diagonal to the respective bishop, and if nothing blocks his way
+                  if (abs(ord(b["King"]["King1"][-2]) - ord(bo["Bishop"][key][0])) == abs(int(b["King"]["King1"][-1]) - int(bo["Bishop"][key][1]))):
+                        attacking = True
+                        blocking = False
+                        for coordinate in coordinates:
+                              file = coordinate[0]
+                              rank = coordinate[1]
+                              if (ord(file) - ord(bo["Bishop"][key][0])) in get_range(ord(b["King"]["King1"][0]) - ord(bo["Bishop"][key][0])) and (int(rank) - int(bo["Bishop"][key][1])) in get_range(int(b["King"]["King1"][1]) - int(bo["Bishop"][key][1])) and abs(int(rank) - int(bo["Bishop"][key][1])) == int(abs(ord(file) - ord(bo["Bishop"][key][0]))):
+                                    if coordinate != bo["Bishop"][key] and coordinate != b["King"]["King1"]:
+                                          if coordinate == position:
+                                                blocking = True
+                                          if coordinate != position:
+                                                attacking = False
+                        if attacking == True and blocking == True:
+                              return(True)
+            #find the correct rook
+            for key in bo["Rook"].keys():
+                  #check if the goal field is vertically or horizontally orthogonal to the rook, and whether something blocks the way
+                  if b["King"]["King1"] in bo["Rook"][key] or b["King"]["King1"] in bo["Rook"][key]:
+                        attacking = True
+                        blocking = False
+                        for coordinate in coordinates:
+                              if (coordinate[0] == bo["Rook"][key][0] and int(coordinate[1]) < max(int(bo["Rook"][key][1]), int(b["King"]["King1"][-1])) and int(coordinate[1]) > min(int(bo["Rook"][key][1]), int(b["King"]["King1"][-1]))) or (coordinate[1] == bo["Rook"][key][1] and ord(coordinate[0]) < max(ord(bo["Rook"][key][0]), ord(b["King"]["King1"][-2])) and ord(coordinate[0]) > min(ord(bo["Rook"][key][0]), ord(b["King"]["King1"][-2]))):
+                                    if coordinate == position:
+                                          blocking = True
+                                    if coordinate != position:
+                                          attacking = False
+                        if attacking == True and blocking == True:
+                              return(True)
+            #find the correct queen
+            for key in bo["Queen"].keys():
+                  #check the fields diagonal, as well as vertically and horizontally orthogonal to the queen, and check if something blocks the way
+                  if (abs(ord(b["King"]["King1"][-2]) - ord(bo["Queen"][key][0])) == abs(int(b["King"]["King1"][-1]) - int(bo["Queen"][key][1]))):
+                        attacking = True
+                        blocking = False
+                        for coordinate in coordinates:
+                              file = coordinate[0]
+                              rank = coordinate[1]
+                              if (ord(file) - ord(bo["Queen"][key][0])) in get_range(ord(b["King"]["King1"][-2]) - ord(bo["Queen"][key][0])) and (int(rank) - int(bo["Queen"][key][1])) in get_range(int(b["King"]["King1"][-1]) - int(bo["Queen"][key][1])) and abs(int(rank) - int(bo["Queen"][key][1])) == abs(ord(file) - ord(bo["Queen"][key][0])):
+                                    if coordinate != bo["Queen"][key] and coordinate != b["King"]["King1"]:
+                                          if coordinate == position:
+                                                blocking = True
+                                          if coordinate != position:
+                                                attacking = False
+                        if attacking == True and blocking == True:
+                              return(True)
+                  if b["King"]["King1"][-2] in bo["Queen"][key] or b["King"]["King1"][-1] in bo["Queen"][key]:
+                        attacking = True
+                        blocking = False
+                        for coordinate in coordinates:
+                              if (coordinate[0] == bo["Queen"][key][0] and int(coordinate[1]) < max(int(bo["Queen"][key][1]), int(b["King"]["King1"][-1])) and int(coordinate[1]) > min(int(bo["Queen"][key][1]), int(b["King"]["King1"][-1]))) or (coordinate[1] == bo["Queen"][key][1] and ord(coordinate[0]) < max(ord(bo["Queen"][key][0]), ord(b["King"]["King1"][-2])) and ord(coordinate[0]) > min(ord(bo["Queen"][key][0]), ord(b["King"]["King1"][-2]))):
+                                    if coordinate == position:
+                                          blocking = True
+                                    if coordinate != position:
+                                          attacking = False
+                        if attacking == True and blocking == True:
+                              return(True)
+            return(False)
+
       #define a function to find the figure that is supposed to be moved
-      def findFigure(keysList, figure):
+      def find_figure(keysList, figure):
             #if the code gives as an N, we must find the correct knight
             if figure == "N":
                   for key in keysList:
                         #determine the right knight by checking its distance to the goal field
                         if(((abs(ord(notation[-2]) - ord(b["Knight"][key][0])) == 1) and (abs(int(notation[-1]) - int(b["Knight"][key][1])) == 2)) or ((abs(ord(notation[-2]) - ord(b["Knight"][key][0])) == 2) and (abs(int(notation[-1]) - int(b["Knight"][key][1])) == 1))):
-                              b["Knight"][key] = [notation[-2], notation[-1]]
-                              return current_board
+                              if check_king2(b["Knight"][key]) == False:
+                                    b["Knight"][key] = [notation[-2], notation[-1]]
+                                    return current_board
             #find the correct bishop
             elif figure == "B":
                   for key in keysList:
@@ -118,11 +183,14 @@ def make_move(notation, current_board = board_original, white = True):
                               for coordinate in coordinates:
                                     file = coordinate[0]
                                     rank = coordinate[1]
-                                    if (ord(file) - ord(b["Bishop"][key][0])) in range(ord(notation[-2]) - ord(b["Bishop"][key][0])) and (int(rank) - int(b["Bishop"][key][1])) in range(int(notation[-1]) - int(b["Bishop"][key][1])) and abs(int(rank) - int(b["Bishop"][key][1])) == abs(int(notation[-1]) - int(b["Bishop"][key][1])):
-                                          blocked = True
+                                    if (ord(file) - ord(b["Bishop"][key][0])) in get_range(ord(notation[-2]) - ord(b["Bishop"][key][0])) and (int(rank) - int(b["Bishop"][key][1])) in get_range(int(notation[-1]) - int(b["Bishop"][key][1])) and abs(int(rank) - int(b["Bishop"][key][1])) == abs(ord(file) - ord(b["Bishop"][key][0])):
+                                          if coordinate != b["Bishop"][key]:
+                                                blocked = True
                               if blocked == False:
-                                    b["Bishop"][key] = [notation[-2], notation[-1]]
-                                    return current_board
+                                    if check_king2(b["Bishop"][key]) == False:
+                                          b["Bishop"][key] = [notation[-2], notation[-1]]
+                                          return current_board
+                  print("BishopFail")
             #find the correct rook
             elif figure == "R":
                   for key in keysList:
@@ -133,8 +201,9 @@ def make_move(notation, current_board = board_original, white = True):
                                     if (coordinate[0] == b["Rook"][key][0] and int(coordinate[1]) < max(int(b["Rook"][key][1]), int(notation[-1])) and int(coordinate[1]) > min(int(b["Rook"][key][1]), int(notation[-1]))) or (coordinate[1] == b["Rook"][key][1] and ord(coordinate[0]) < max(ord(b["Rook"][key][0]), ord(notation[-2])) and ord(coordinate[0]) > min(ord(b["Rook"][key][0]), ord(notation[-2]))):
                                           blocked = True
                               if blocked == False:
-                                    b["Rook"][key] = [notation[-2], notation[-1]]
-                                    return current_board
+                                    if check_king2(b["Rook"][key]) == False:
+                                          b["Rook"][key] = [notation[-2], notation[-1]]
+                                          return current_board
             #find the correct queen
             elif figure == "Q":
                   for key in keysList:
@@ -144,17 +213,22 @@ def make_move(notation, current_board = board_original, white = True):
                               for coordinate in coordinates:
                                     file = coordinate[0]
                                     rank = coordinate[1]
-                                    if (ord(file) - ord(b["Queen"][key][0])) in range(ord(notation[-2]) - ord(b["Queen"][key][0])) and (int(rank) - int(b["Queen"][key][1])) in range(int(notation[-1]) - int(b["Queen"][key][1])) and abs(int(rank) - int(b["Queen"][key][1])) == abs(int(notation[-1]) - int(b["Queen"][key][1])):
-                                          blocked = True
+                                    if (ord(file) - ord(b["Queen"][key][0])) in get_range(ord(notation[-2]) - ord(b["Queen"][key][0])) and (int(rank) - int(b["Queen"][key][1])) in get_range(int(notation[-1]) - int(b["Queen"][key][1])) and abs(int(rank) - int(b["Queen"][key][1])) == abs(ord(file) - ord(b["Queen"][key][0])):
+                                          if coordinate != b["Queen"][key]:
+                                                blocked = True
                                     if blocked == False:
+                                          if check_king2(b["Queen"][key]) == False:
+                                                b["Queen"][key] = [notation[-2], notation[-1]]
+                                                return current_board
+                        if notation[-2] in b["Queen"][key] or notation[-1] in b["Queen"][key]:
+                              blocked = False
+                              for coordinate in coordinates:
+                                    if (coordinate[0] == b["Queen"][key][0] and int(coordinate[1]) < max(int(b["Queen"][key][1]), int(notation[-1])) and int(coordinate[1]) > min(int(b["Queen"][key][1]), int(notation[-1]))) or (coordinate[1] == b["Queen"][key][1] and ord(coordinate[0]) < max(ord(b["Queen"][key][0]), ord(notation[-2])) and ord(coordinate[0]) > min(ord(b["Queen"][key][0]), ord(notation[-2]))):
+                                          blocked = True
+                              if blocked == False:
+                                    if check_king2(b["Queen"][key]) == False:
                                           b["Queen"][key] = [notation[-2], notation[-1]]
                                           return current_board
-                        for coordinate in coordinates:
-                              if (coordinate[0] == b["Queen"][key][0] and int(coordinate[1]) < max(int(b["Queen"][key][1]), int(notation[-1])) and int(coordinate[1]) > min(int(b["Queen"][key][1]), int(notation[-1]))) or (coordinate[1] == b["Queen"][key][1] and ord(coordinate[0]) < max(ord(b["Queen"][key][0]), ord(notation[-2])) and ord(coordinate[0]) > min(ord(b["Queen"][key][0]), ord(notation[-2]))):
-                                    blocked = True
-                        if blocked == False:
-                              b["Queen"][key] = [notation[-2], notation[-1]]
-                              return current_board
       #remove any additonal signs at the end of the notation
       if notation[-1] in ["#", "+", "!", "?"]:
             notation = notation[:-1]
@@ -178,7 +252,6 @@ def make_move(notation, current_board = board_original, white = True):
       if notation == "O-O":
             b["King"]["King1"][0] = "g"
             b["Rook"]["Rook2"][0] = "f"
-            print("rochade")
             return current_board
       #play the long rochade
       if notation == "O-O-O":
@@ -202,13 +275,13 @@ def make_move(notation, current_board = board_original, white = True):
                               bo[figure][piece] = ["0", "0"]
                               beaten = True
                               break
-            #if we have not beaten any figure yet, we probably have an en passé
+            #if we have not beaten any figure yet, we probably have an en passent
             if beaten == False:
                   for figure in bo.keys():
                         if beaten == True: break
                         for piece in bo[figure].keys():
-                              #check for an en passé
-                              if bo[figure][piece] == [notation[-2], chr(int(notation[-1]) - mirror)]:
+                              #check for an en passent
+                              if bo[figure][piece] == [notation[-2], str(int(notation[-1]) - mirror)]:
                                     bo[figure][piece] = ["0", "0"]
                                     beaten = True
                                     break
@@ -232,9 +305,9 @@ def make_move(notation, current_board = board_original, white = True):
             if notation[0] == "K":
                   b["King"]["King1"] = [notation[1], notation[2]]
                   return current_board
-            #otherwise, we have to use our findFigure function to find the respective figure we want to move
+            #otherwise, we have to use our find_figure function to find the respective figure we want to move
             else:
-                  findFigure(b[legend[notation[0]]].keys(), notation[0])
+                  find_figure(b[legend[notation[0]]].keys(), notation[0])
                   return current_board
       if len(notation) == 4:
             #check if we have a pawn promotion
@@ -250,9 +323,9 @@ def make_move(notation, current_board = board_original, white = True):
                         if notation[0] == "K":
                               b["King"]["King1"] = [notation[-2], notation[-1]]
                               return current_board
-                        #otherwise, we have to use our findFigure function to find the respective figure we want to move
+                        #otherwise, we have to use our find_figure function to find the respective figure we want to move
                         else:
-                              findFigure(b[legend[notation[0]]].keys(), notation[0])
+                              find_figure(b[legend[notation[0]]].keys(), notation[0])
                               return current_board
                   #if we have to move a pawn that beats another figure, we need to consider that it beats figures diagonally
                   else:
@@ -267,7 +340,7 @@ def make_move(notation, current_board = board_original, white = True):
                   for key in b[legend[notation[0]]].keys():
                         if notation[1] in b[legend[notation[0]]][key]:
                               keys.append(key)
-                  findFigure(keys, notation[0])
+                  find_figure(keys, notation[0])
                   return current_board
                  
       if len(notation) == 5:
@@ -277,8 +350,8 @@ def make_move(notation, current_board = board_original, white = True):
                   for key in b[legend[notation[0]]].keys():
                         if notation[1] in b[legend[notation[0]]][key]:
                               keys.append(key)
-                  #after filtering for the figures that fulfill the specification noted in the notation, we use the findFigure function again
-                  findFigure(keys, notation[0])
+                  #after filtering for the figures that fulfill the specification noted in the notation, we use the find_figure function again
+                  find_figure(keys, notation[0])
                   return current_board
       if len(notation) < 7:
             if "=" in notation:
@@ -286,13 +359,15 @@ def make_move(notation, current_board = board_original, white = True):
                   for key in b["Pawn"].keys():
                   #check which pawn would be in reach of the goal field and remove him from the board
                         if b["Pawn"][key][0] == notation[0] and b["Pawn"][key][1] == str((int(notation[3]) - mirror)):
-                              b["Pawn"][key] == ["0", "0"]
+                              b["Pawn"][key] = ["0", "0"]
                               return current_board 
             #in this case, a figure is double-ambigious
             for key in b[legend[notation[0]]].keys():
                   if b[legend[notation[0]]][key] == [notation[1], notation[2]]:
                         b[legend[notation[0]]][key] = [notation[-2], notation[-1]]
-                        return current_board                                   
+                        return current_board
+            print("error, notation invalid")
+            return current_board                                   
       #if we could not execute a move yet, an error seems to have occured
       print("error, notation invalid")
       return current_board
@@ -304,6 +379,7 @@ def get_data(path, white=True):
       state_list = []
       #use the original boardstate before the first move
       global board_original
+      board_used = copy.deepcopy(board_original)
       with open(path, 'r') as pgn_file:
             tokens = []
             for line in pgn_file:
@@ -314,12 +390,11 @@ def get_data(path, white=True):
       for token in tokens:
             for turn in token:
                   board_matrix = np.zeros((12,8,8))
-                  print(turn[1:])
                   m_counter = 0
-                  board_original = make_move(turn[1:], board_original, white)
-                  for color in board_original.keys():
-                        for figure in board_original[color].keys():
-                              for piece in board_original[color][figure].values():
+                  board_used = make_move(turn[1:], board_used, white)
+                  for color in board_used.keys():
+                        for figure in board_used[color].keys():
+                              for piece in board_used[color][figure].values():
                                     if piece[0] != "0":
                                           board_matrix[m_counter][8 - int(piece[1])][ord(piece[0]) - 97] = 1
                               m_counter += 1
@@ -331,7 +406,7 @@ def get_data(path, white=True):
 
 
 # Malte: commented that out
-'''
+
 #test
 """make_move("h4")
 make_move("e5")
@@ -348,6 +423,6 @@ make_move("Bb7")
 """
 #print(board_original.items())
 
-print(get_data("/Users/franziska-marieplate/Documents/5. Semester/Python/Chess/pythonProject2023-24/chess_data/all_games/game_1.pgn"))
+get_data("/Users/franziska-marieplate/Documents/5. Semester/Python/Chess/pythonProject2023-24/chess_data/all_games/game_363.pgn")
 #getData("/chess_data/all_games/game_1.pgn")
-'''
+
