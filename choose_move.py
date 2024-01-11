@@ -9,14 +9,10 @@ from dim_functions import split_dims
 def eval_moves(board, pred):
     legal_moves = list(board.legal_moves)
     legal_states = []
-    board_dict = boardstates.convert_to_dict(preprocessing.split_dims(board))
+    board_dict = boardstates.convert_to_dict(split_dims(board))
     for move in legal_moves:
-<<<<<<< HEAD
         state = boardstates.convert_to_matrix(boardstates.make_move(board.san(move), board_dict, board.turn))
         legal_states.append(state)
-=======
-        legal_states.append(boardstates.make_move(move, split_dims(board), board.turn))
->>>>>>> main
     all_dist = []
     for state in legal_states:
         dist = np.linalg.norm(pred - state)
