@@ -38,9 +38,14 @@ def play(model_name, color="black"):
         # Get prediction from model
         pred = model_pred.predict(sliced)
         # Execute best move
+
         # Replace with Franzis function later
-        # board.push(eval_moves(board, pred))
-        board.push(get_best_move(board, pred))
+        # Franzis
+        board.push(eval_moves(board, pred))
+
+        # Maltes
+        # board.push(get_best_move(board, pred))
+
         print(board)
 
         # Users turn
