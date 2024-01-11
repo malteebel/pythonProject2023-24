@@ -2,8 +2,8 @@ import re
 import numpy as np
 import dim_functions
 import copy
-
-
+#import preprocessing
+#import choose_move
 
 #create an initial board state
 board_original = dict()
@@ -72,14 +72,43 @@ board_original["Black"]["King"] = dict()
 board_original["Black"]["King"]["King1"] = ["e", "8"]
 
 
+def convert_to_dict(board_matrix):
+      board_dict = dict()
+      matrix_idx = 0
+      for color in board_original.keys():
+            board_dict[color] = dict()
+            for figure in board_original[color].keys():
+                  board_dict[color][figure] = dict()
+                  figure_idx = 0
+                  for row in range(len(board_matrix[matrix_idx])):
+                        for square in range(len(board_matrix[matrix_idx][row])):
+                              if board_matrix[matrix_idx][row][square] == 1:
+                                    board_dict[color][figure][figure+str(figure_idx+1)] = [chr(ord("a") + square), str(8 - row)]
+                                    figure_idx += 1
+                  matrix_idx += 1
+      return board_dict
 
+
+
+
+def convert_to_matrix(board):
+      m_counter = 0
+      board_matrix = np.zeros((12,8,8)) 
+      for color in board.keys():
+            for figure in board[color].keys():
+                  for piece in board[color][figure].values():
+                        if piece[0] != "0":
+                              board_matrix[m_counter][8 - int(piece[1])][ord(piece[0]) - 97] = 1
+                  m_counter += 1
+      return(board_matrix)
 #set the state of the game to running
 state = "Running"
 def get_range(num):
       return range(0, num) if num >= 0 else range(num+1, 1)
 #define the make_move function, which changes the board state according to a move notation 
-def make_move(notation, current_board, white = True): 
+def make_move(notation, board, white = True): 
       global state
+      current_board = copy.deepcopy(board)
       #create a legend for the different figure encodings
       legend = dict()
       legend["Q"] = "Queen"
@@ -387,18 +416,10 @@ def get_data(path, white=True):
                   line = line.strip()
                   tokens.append(re.findall(" [^ ]*", line))
       #for every move notation, perform the move using the make_move function, and append the resulting boardstate to state_list
-      for token in tokens:
+      for token in tokens[:10]:
             for turn in token:
-                  board_matrix = np.zeros((12,8,8))
-                  m_counter = 0
                   board_used = make_move(turn[1:], board_used, white)
-                  for color in board_used.keys():
-                        for figure in board_used[color].keys():
-                              for piece in board_used[color][figure].values():
-                                    if piece[0] != "0":
-                                          board_matrix[m_counter][8 - int(piece[1])][ord(piece[0]) - 97] = 1
-                              m_counter += 1
-                  board_matrix = dim_functions.merge_dims(board_matrix)
+                  board_matrix = dim_functions.merge_dims(convert_to_matrix(board_used))
                   state_list.append(board_matrix)
                   white = (white == False)
       return(state_list)
@@ -423,6 +444,9 @@ make_move("Bb7")
 """
 #print(board_original.items())
 
-get_data("/Users/franziska-marieplate/Documents/5. Semester/Python/Chess/pythonProject2023-24/chess_data/all_games/game_363.pgn")
+test = get_data("/Users/franziska-marieplate/Documents/5. Semester/Python/Chess/pythonProject2023-24/chess_data/all_games/game_363.pgn")
+
 #getData("/chess_data/all_games/game_1.pgn")
+
+
 
