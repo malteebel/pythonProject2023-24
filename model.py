@@ -36,14 +36,14 @@ class ChessANN(tf.keras.Model):
             tf.keras.metrics.CategoricalAccuracy(name="test_acc")]
 
         # Define model
-        self.layer_1 = tf.keras.layers.Dense(units=64, activation="relu")
-        self.layer_2 = tf.keras.layers.Dense(units=128, activation="relu")
-        self.layer_3 = tf.keras.layers.Dense(units=256, activation="relu")
+        self.layer_1 = tf.keras.layers.Dense(units=256, activation="relu")
+        self.layer_2 = tf.keras.layers.Dense(units=512, activation="relu")
+        self.layer_3 = tf.keras.layers.Dense(units=1024, activation="relu")
         self.dropout_4 = tf.keras.layers.Dropout(rate=0.2)
         self.batch_norm_5 = tf.keras.layers.BatchNormalization()
-        self.layer_6 = tf.keras.layers.Dense(units=64, activation="relu")
-        self.layer_7 = tf.keras.layers.Dense(units=128, activation="relu")
-        self.layer_8 = tf.keras.layers.Dense(units=256, activation="relu")
+        self.layer_6 = tf.keras.layers.Dense(units=256, activation="relu")
+        self.layer_7 = tf.keras.layers.Dense(units=512, activation="relu")
+        self.layer_8 = tf.keras.layers.Dense(units=1024, activation="relu")
         self.dropout_9 = tf.keras.layers.Dropout(rate=0.2)
         self.batch_norm_10 = tf.keras.layers.BatchNormalization()
 
