@@ -54,8 +54,12 @@ def preprocessing(path_downloaded_games="chess_data/downloaded_games", color="bl
     # Separate all games
     games = separate_games(path_movelist)
 
-    # Create the new all_games directory
-    os.mkdir("chess_data/all_games")
+    # Error handling if folder already exists
+    try:
+        # Create the new all_games directory
+        os.mkdir("chess_data/all_games")
+    except OSError:
+        print("all_games already exists")
 
 
     # Creates a file for EACH game
