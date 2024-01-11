@@ -1,8 +1,12 @@
-# pgnBasedChessBot
-Python Project WiSe 2023/2024
+# Imitating Chess ANN
+## A programm that allows players to train against specific opponents
 
-## Scripts
+The following project was created as the Python Project WiSe 2023/2024 in the course **Introduction to Computer Programming (Python)** at the **University of Trento**. 
 
+This project is able to convert downloaded *Chess.com* pgn files into a readable move-by-move format and train a customizable artificial neural network specific to one opponent and colour as well as play the net in the console.
+
+### File structure
+![alt text](https://github.com/malteebel/pythonProject2023-24/blob/main/file_structure.pgn?raw=true)
 -> boardstates.py (Franzi)
 
 -> model.py (Malte)
