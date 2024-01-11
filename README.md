@@ -6,7 +6,10 @@ The following project was created as the Python Project WiSe 2023/2024 in the co
 This project is able to convert downloaded *Chess.com* pgn files into a readable move-by-move format and train a customizable artificial neural network specific to one opponent and colour as well as play the net in the console.
 
 ### File structure
-![alt text](https://github.com/malteebel/pythonProject2023-24/blob/main/file_structure.pgn?raw=true)
+
+![file_structure](https://github.com/malteebel/pythonProject2023-24/assets/110181759/2737ebcd-de54-4df1-bbad-86e1169f1344)
+
+
 -> boardstates.py (Franzi)
 
 -> model.py (Malte)
