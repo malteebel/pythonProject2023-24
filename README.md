@@ -1,50 +1,30 @@
-# pgnBasedChessBot
-Python Project WiSe 2023/2024
+# Imitating Chess ANN
+## A programm that allows players to train against specific opponents
 
-## Scripts
+The following project was created as the Python Project WiSe 2023/2024 in the course **Introduction to Computer Programming (Python)** at the **University of Trento**. 
 
--> boardstates.py (Franzi)
+This project is able to convert downloaded *Chess.com* pgn files into a readable move-by-move format and train a customizable artificial neural network specific to one opponent and color as well as play the net in the console.
 
--> model.py (Malte)
+### File structure
 
--> preprocessing.py (Malte)
+![file_structure](https://github.com/malteebel/pythonProject2023-24/assets/110181759/2737ebcd-de54-4df1-bbad-86e1169f1344)
 
--> regex_functions.py (Malte)
+### How to use this tool
 
--> test_states.py (Malte)
+1. Clone this project
+2. Install all the necessary packages (maybe link file here)
+3. Go in to the **Chess.com archive** of the player you want to imitate, select advanced to choose the color you want your opponent to play and set the path of all files to the **downloaded_games** variable.
+4. Execute the main script with the training variables set accordingly, for training **play_game** has to be set to *False*.
+5. Execute the main script again with the playing variables set accordingly, for playing **player_color** indicates **YOUR** color. Set model_name to saved_model_[your config name]_with_FIT.
+6. Input moves by typing the standard algebraic notation for it, e.g. e4.
 
--> training.py (Malte)
+### Model
 
-## Data
+![Model architecture](https://github.com/malteebel/pythonProject2023-24/assets/110181759/bc0efb23-b386-4fdc-887a-7595886a7867)
 
-The folder chess_data contains all the data accociated with the original data. The original data is in the subfolder downloaded_games. The pgn file game_list.pgn contains a list of all games. The pgn file move_list.pgn contains all moves played in all games with the move number in a format like this:
-
-1. e4 c5
-2. Nf3 d6
-
-Every pgn file in the all_games folder contains all moves in the same notation of one game.
-
-## How to use this script
-
-**Data handling**
-
-First download data from Chess.com from one player with the desired piece color. Then use the preprocessing.py script to get all relevant data for the model.
-
-
-**Recreate board states from move sequences** -> In progress
-
--> boardstates.py -> In  progress (Franzi)
-
-OR for now
-
--> test_states.py (Malte)
-
-**Model**
 
 (Summary/Image here)
 
-**Training**
+### Training
 
-**User Interface stuff?**
-
-???
+(Explanation here)

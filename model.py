@@ -36,14 +36,14 @@ class ChessANN(tf.keras.Model):
             tf.keras.metrics.CategoricalAccuracy(name="test_acc")]
 
         # Define model
-        self.layer_1 = tf.keras.layers.Dense(units=64, activation="relu")
-        self.layer_2 = tf.keras.layers.Dense(units=128, activation="relu")
-        self.layer_3 = tf.keras.layers.Dense(units=256, activation="relu")
+        self.layer_1 = tf.keras.layers.Dense(units=256, activation="relu")
+        self.layer_2 = tf.keras.layers.Dense(units=512, activation="relu")
+        self.layer_3 = tf.keras.layers.Dense(units=1024, activation="relu")
         self.dropout_4 = tf.keras.layers.Dropout(rate=0.2)
         self.batch_norm_5 = tf.keras.layers.BatchNormalization()
-        self.layer_6 = tf.keras.layers.Dense(units=64, activation="relu")
-        self.layer_7 = tf.keras.layers.Dense(units=128, activation="relu")
-        self.layer_8 = tf.keras.layers.Dense(units=256, activation="relu")
+        self.layer_6 = tf.keras.layers.Dense(units=256, activation="relu")
+        self.layer_7 = tf.keras.layers.Dense(units=512, activation="relu")
+        self.layer_8 = tf.keras.layers.Dense(units=1024, activation="relu")
         self.dropout_9 = tf.keras.layers.Dropout(rate=0.2)
         self.batch_norm_10 = tf.keras.layers.BatchNormalization()
 
@@ -54,8 +54,6 @@ class ChessANN(tf.keras.Model):
         self.reshape_12 = tf.keras.layers.Reshape((12, 8, 8))
 
 
-    # Use tf.function to increase speed
-    @tf.function
     def call(self, x):
         """
         Activates the model and feeds information forward through
@@ -66,7 +64,8 @@ class ChessANN(tf.keras.Model):
         """
 
         # Ensure correct input shape
-        x = tf.reshape(x,  [-1, 12*8*8])
+        # EDIT: maybe flattening not necessary
+        x = tf.reshape(x, [-1, 12*8*8])
         
         x = self.layer_1(x)
         x = self.layer_2(x)
@@ -84,6 +83,10 @@ class ChessANN(tf.keras.Model):
         x = self.reshape_12(x)
 
         return x
+    
+    def build_graph(self):
+        x = tf.keras.Input(shape=(12, 8, 8))
+        return tf.keras.Model(inputs=[x], outputs=self.call(x))
 
     def reset_metrics(self):
         """Reset all the metrics, can be used after every epoch"""
@@ -91,7 +94,6 @@ class ChessANN(tf.keras.Model):
         for metric in self.metrics:
             metric.reset_states()
 
-    @tf.function
     def train_step(self, data):
         """
         Calculates the output and adjusts weights based on loss of
@@ -129,7 +131,6 @@ class ChessANN(tf.keras.Model):
         # Return a dictionary mapping training metrics to current value
         return {metric.name: metric.result() for metric in self.metrics}
     
-    @tf.function
     def test_step(self, data):
         """Calculates the output of one forward computation
 
