@@ -41,18 +41,24 @@ def play(model_name, color="black"):
 
         # Replace with Franzis function later
         # Franzis
-        board.push(eval_moves(board, pred))
+        # board.push(eval_moves(board, pred))
 
         # Maltes
-        # board.push(get_best_move(board, pred))
+        board.push(get_best_move(board, pred))
 
         print(board)
 
         # Users turn
         # Get user input as SAN notation
-        user_input = input("Your move: ")
-        board.push_san(user_input)
-        print(board)
+        moved = False
+        while not moved:
+            try:
+                user_input = input("Your move: ")
+                board.push_san(user_input)
+                print(board)
+                moved = True
+            except ValueError:
+                print("Illegal move, please tryp again")
         
     return board.outcome()
 
