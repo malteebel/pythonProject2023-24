@@ -20,6 +20,9 @@ This project is able to convert downloaded *Chess.com* pgn files into a readable
 
 ### Model
 
+![Model architecture](https://github.com/malteebel/pythonProject2023-24/assets/110181759/bc0efb23-b386-4fdc-887a-7595886a7867)
+
+
 (Summary/Image here)
 
 ### Training
