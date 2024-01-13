@@ -20,11 +20,25 @@ This project is able to convert downloaded *Chess.com* pgn files into a readable
 
 ### Model
 
-![Model architecture](https://github.com/malteebel/pythonProject2023-24/assets/110181759/bc0efb23-b386-4fdc-887a-7595886a7867)
+![image](https://github.com/malteebel/pythonProject2023-24/assets/110181759/56ca29e4-5ef5-42d7-8683-08fddaccdb8d)
 
-
-(Summary/Image here)
+We decided to implement a classical feed forward model without convolution. Since our focus was not on the model creation we did not worry about overfitting or quality of the dataset. The data consists of roughly 280 games for each color which is just way too little to for a model to learn the underlying concepts of chess. 
 
 ### Training
 
-(Explanation here)
+We implemented a basic training loop with the .compile and .fit methods from the high level tensorflow/keras api. We also started implementing a manual training loop on the low level api for higher customizability. This manual training loop currently **does not work** due to shape errors but can easily be customized depending on the model chosen. We trained the current models on 50 epochs but with callbacks on the loss of the test set.
+
+It proved difficult to assess the quality of the model, we believed that loss was best due to our absolute calculation.
+
+### Notes
+
+We refrained from using some existing libraries and functions to showcase our basic python skills. 
+
+### Outlook
+
+Possible continiuation of this work could be:
+1. Testing different model architectures 
+2. Improving model quality and hyperparameter optimization
+3. Use a pretrained model to then refine it with a small dataset
+4. Rework some functions to increase speed of preprocessing and training
+5. Add a random factor to the move to increase varaibility
