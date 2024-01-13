@@ -32,7 +32,7 @@ It proved difficult to assess the quality of the model, we believed that loss wa
 
 ### Notes
 
-We refrained from using some existing libraries and functions to showcase our basic python skills. 
+We refrained from using some existing libraries and functions to showcase our basic python skills. This can be seen especially in the make_move function, since it focuses on interpreting moves given in algebraic notation, and it provided the possibility to include processing steps that mimic the way actual human languages could be assessed through python code.
 
 ### Outlook
 
@@ -41,4 +41,5 @@ Possible continiuation of this work could be:
 2. Improving model quality and hyperparameter optimization
 3. Use a pretrained model to then refine it with a small dataset
 4. Rework some functions to increase speed of preprocessing and training
-5. Add a random factor to the move to increase varaibility
+5. Add a random factor to the move to increase variability
+6. Add some improvements to the UI to create a better player-experience
