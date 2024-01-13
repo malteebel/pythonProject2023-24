@@ -1,7 +1,11 @@
 """Script containing the class of the model and all the parameters"""
 
 import tensorflow as tf
-from training_functions import absolute_squared_error
+
+# Define new loss function
+def absolute_squared_error(y_target, y_pred):
+    loss = tf.reduce_mean(tf.square(tf.abs(y_target - y_pred)))
+    return loss
 
 # Add class that inherits from tf.keras.Model class
 class ChessANN(tf.keras.Model):
@@ -28,7 +32,7 @@ class ChessANN(tf.keras.Model):
         # Can also try MSLE and MAE
         # MAYBE Squared Error Per Element is better
         # self.loss_function = tf.keras.losses.MeanSquaredError()
-        self.loss_function = absolute_squared_error()
+        self.loss_function = absolute_squared_error
 
         # Set metrics in class
         self.metrics_list = [

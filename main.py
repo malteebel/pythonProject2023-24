@@ -4,15 +4,15 @@ import training_functions
 
 # PLAYING SETTINGS
 play_game = False
-play_color = "white"
-model_name = "saved_model_Test_3_with_FIT"
+play_color = "black"
+model_name = "saved_model_Mixed_Test_02"
 
 # TRAINING SETTINGS
 train_model = True
-train_color = "black"
+train_color = "white"
 downloaded_games = "chess_data/downloaded_games"
 epochs = 50
-config_name = "Test_4"
+config_name = "Mixed_Test_02"
 
 if play_game:
     play.play(model_name, play_color)
@@ -25,3 +25,4 @@ elif train_model:
         test_ds=test_ds,
         epochs=epochs,
         config_name=config_name)
+    

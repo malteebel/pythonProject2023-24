@@ -11,12 +11,8 @@ import tensorflow as tf
 from keras.callbacks import EarlyStopping, TensorBoard
 import datetime
 import tqdm
-from model import ChessANN
+from model import ChessANN, absolute_squared_error
 
-# Define new loss function
-def absolute_squared_error(y_target, y_pred):
-    loss = tf.reduce_mean(tf.square(tf.abs(y_target - y_pred)))
-    return loss
 
 def training_loop_fit(train_ds, test_ds, epochs, config_name):
     """
@@ -39,13 +35,15 @@ def training_loop_fit(train_ds, test_ds, epochs, config_name):
     # Add early stopping to save training time if model is not 
     # learning
     early_stopping = EarlyStopping(
-        monitor='val_test_loss', patience=5, 
+        monitor='val_test_loss', 
+        patience=5, 
         restore_best_weights=True)
     
     # Add tensorboard to help visualize loss, open tensorboard before
     # training using: tensorboard --logdir logs/fit
     tensorboard_callback = TensorBoard(
-        log_dir=log_path, histogram_freq=3)
+        log_dir=log_path, 
+        histogram_freq=3)
     
     # Compile model with set metrics 
     model.compile(
