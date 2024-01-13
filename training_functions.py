@@ -91,7 +91,7 @@ def training_loop_man(train_ds, test_ds, epochs, config_name):
     
 
 
-    # Initialize and ?build? model
+    # Initialize and build model
     model = ChessANN()
     model.build(input_shape=(12, 8, 8))
 
