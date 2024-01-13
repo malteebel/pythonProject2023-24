@@ -41,9 +41,3 @@ def get_best_move(board, prediction):
     return best_move
 
 
-test = boardstates.get_data("/Users/franziska-marieplate/Documents/5. Semester/Python/Chess/pythonProject2023-24/chess_data/all_games/game_363.pgn")
-array_3d = np.random.rand(12, 8, 8)
-#print(test[-1].legal_moves)
-#print(list(test[-1].legal_moves))
-print(get_best_move(test[-2], array_3d))
-print(eval_moves(test[-2], array_3d))
