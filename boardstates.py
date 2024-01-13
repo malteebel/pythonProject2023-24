@@ -427,7 +427,7 @@ def get_data(path, white=True):
 
 
 # Malte: commented that out
-
+'''
 #test
 """make_move("h4")
 make_move("e5")
@@ -447,6 +447,7 @@ make_move("Bb7")
 test = get_data("/Users/franziska-marieplate/Documents/5. Semester/Python/Chess/pythonProject2023-24/chess_data/all_games/game_363.pgn")
 
 #getData("/chess_data/all_games/game_1.pgn")
+'''
 
 
 
