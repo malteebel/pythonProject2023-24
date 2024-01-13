@@ -71,10 +71,11 @@ board_original["Black"]["Queen"]["Queen1"] = ["d", "8"]
 board_original["Black"]["King"] = dict()
 board_original["Black"]["King"]["King1"] = ["e", "8"]
 
-
+#function that converts a boardstate formatted as matrices into a dicionary
 def convert_to_dict(board_matrix):
       board_dict = dict()
       matrix_idx = 0
+      #go through every color, figure and field an add the corresponding dictionary keys and values
       for color in board_original.keys():
             board_dict[color] = dict()
             for figure in board_original[color].keys():
@@ -88,12 +89,11 @@ def convert_to_dict(board_matrix):
                   matrix_idx += 1
       return board_dict
 
-
-
-
+#convert a boardstate in the form of a dictionary into a matrix
 def convert_to_matrix(board):
       m_counter = 0
-      board_matrix = np.zeros((12,8,8)) 
+      board_matrix = np.zeros((12,8,8))
+       #go through every color, figure and field an add 1s to the corresponding indices
       for color in board.keys():
             for figure in board[color].keys():
                   for piece in board[color][figure].values():
@@ -101,13 +101,13 @@ def convert_to_matrix(board):
                               board_matrix[m_counter][8 - int(piece[1])][ord(piece[0]) - 97] = 1
                   m_counter += 1
       return(board_matrix)
+
 #set the state of the game to running
-state = "Running"
 def get_range(num):
       return range(0, num) if num >= 0 else range(num+1, 1)
-#define the make_move function, which changes the board state according to a move notation 
+
+#function which changes the board state (in form of a dict) according to a move notation and puts our the updated board state (in form of a dict)
 def make_move(notation, board, white = True): 
-      global state
       current_board = copy.deepcopy(board)
       #create a legend for the different figure encodings
       legend = dict()
@@ -132,26 +132,29 @@ def make_move(notation, board, white = True):
             bo = current_board["White"]
             white = True
             mirror = -1
-      def check_king2(position):
+      #function that checks if the king will be threatened if we move a specified figure
+      def check_king(position):
             for key in bo["Bishop"].keys():
-                  #check if the goal field is on a diagonal to the respective bishop, and if nothing blocks his way
+                  #check if an opponent's bishop could potentionally threaten the king
                   if (abs(ord(b["King"]["King1"][-2]) - ord(bo["Bishop"][key][0])) == abs(int(b["King"]["King1"][-1]) - int(bo["Bishop"][key][1]))):
+                        #variables for checking if the king is protected by our specified figure, and if the bishop might already be blocked by another figure
                         attacking = True
                         blocking = False
                         for coordinate in coordinates:
                               file = coordinate[0]
                               rank = coordinate[1]
+                              #if the specified figure is in the way, blocking is set to true, and if another figure is in the way, attacking is set to false
                               if (ord(file) - ord(bo["Bishop"][key][0])) in get_range(ord(b["King"]["King1"][0]) - ord(bo["Bishop"][key][0])) and (int(rank) - int(bo["Bishop"][key][1])) in get_range(int(b["King"]["King1"][1]) - int(bo["Bishop"][key][1])) and abs(int(rank) - int(bo["Bishop"][key][1])) == int(abs(ord(file) - ord(bo["Bishop"][key][0]))):
                                     if coordinate != bo["Bishop"][key] and coordinate != b["King"]["King1"]:
                                           if coordinate == position:
                                                 blocking = True
                                           if coordinate != position:
                                                 attacking = False
+                        #if the king is actually attacked, and our figure is blocking, we can't move that figure
                         if attacking == True and blocking == True:
-                              return(True)
-            #find the correct rook
+                              return(True)      
             for key in bo["Rook"].keys():
-                  #check if the goal field is vertically or horizontally orthogonal to the rook, and whether something blocks the way
+                  #check if an opponent's rook could potentionally threaten the king, using the same principle as for the bishop above
                   if b["King"]["King1"] in bo["Rook"][key] or b["King"]["King1"] in bo["Rook"][key]:
                         attacking = True
                         blocking = False
@@ -163,9 +166,8 @@ def make_move(notation, board, white = True):
                                           attacking = False
                         if attacking == True and blocking == True:
                               return(True)
-            #find the correct queen
             for key in bo["Queen"].keys():
-                  #check the fields diagonal, as well as vertically and horizontally orthogonal to the queen, and check if something blocks the way
+                  #check if an opponent's rook queen potentionally threaten the king, using the same principle as for the bishop above
                   if (abs(ord(b["King"]["King1"][-2]) - ord(bo["Queen"][key][0])) == abs(int(b["King"]["King1"][-1]) - int(bo["Queen"][key][1]))):
                         attacking = True
                         blocking = False
@@ -180,6 +182,7 @@ def make_move(notation, board, white = True):
                                                 attacking = False
                         if attacking == True and blocking == True:
                               return(True)
+                  #since the queen can move not only diagonally, but also vertically and horizontally, we have to check for the directions too
                   if b["King"]["King1"][-2] in bo["Queen"][key] or b["King"]["King1"][-1] in bo["Queen"][key]:
                         attacking = True
                         blocking = False
@@ -191,6 +194,7 @@ def make_move(notation, board, white = True):
                                           attacking = False
                         if attacking == True and blocking == True:
                               return(True)
+            #if our specified figure is not protecting our king, we can move it            
             return(False)
 
       #define a function to find the figure that is supposed to be moved
@@ -200,7 +204,8 @@ def make_move(notation, board, white = True):
                   for key in keysList:
                         #determine the right knight by checking its distance to the goal field
                         if(((abs(ord(notation[-2]) - ord(b["Knight"][key][0])) == 1) and (abs(int(notation[-1]) - int(b["Knight"][key][1])) == 2)) or ((abs(ord(notation[-2]) - ord(b["Knight"][key][0])) == 2) and (abs(int(notation[-1]) - int(b["Knight"][key][1])) == 1))):
-                              if check_king2(b["Knight"][key]) == False:
+                              #check if the knight is protecting the king, and therefore can't be moved
+                              if check_king(b["Knight"][key]) == False:
                                     b["Knight"][key] = [notation[-2], notation[-1]]
                                     return current_board
             #find the correct bishop
@@ -216,7 +221,8 @@ def make_move(notation, board, white = True):
                                           if coordinate != b["Bishop"][key]:
                                                 blocked = True
                               if blocked == False:
-                                    if check_king2(b["Bishop"][key]) == False:
+                                    #check if the bishop is protecting the king, and therefore can't be moved
+                                    if check_king(b["Bishop"][key]) == False:
                                           b["Bishop"][key] = [notation[-2], notation[-1]]
                                           return current_board
                   print("BishopFail")
@@ -230,13 +236,14 @@ def make_move(notation, board, white = True):
                                     if (coordinate[0] == b["Rook"][key][0] and int(coordinate[1]) < max(int(b["Rook"][key][1]), int(notation[-1])) and int(coordinate[1]) > min(int(b["Rook"][key][1]), int(notation[-1]))) or (coordinate[1] == b["Rook"][key][1] and ord(coordinate[0]) < max(ord(b["Rook"][key][0]), ord(notation[-2])) and ord(coordinate[0]) > min(ord(b["Rook"][key][0]), ord(notation[-2]))):
                                           blocked = True
                               if blocked == False:
-                                    if check_king2(b["Rook"][key]) == False:
+                                    #check if the rook is protecting the king, and therefore can't be moved
+                                    if check_king(b["Rook"][key]) == False:
                                           b["Rook"][key] = [notation[-2], notation[-1]]
                                           return current_board
             #find the correct queen
             elif figure == "Q":
                   for key in keysList:
-                        #check the fields diagonal, as well as vertically and horizontally orthogonal to the queen, and check if something blocks the way
+                        #check if the goal field if diagonal, or vertically or horizontally orthogonal to the queen, and check if something blocks the way
                         blocked = False
                         if (abs(ord(notation[-2]) - ord(b["Queen"][key][0])) == abs(int(notation[-1]) - int(b["Queen"][key][1]))):
                               for coordinate in coordinates:
@@ -246,7 +253,7 @@ def make_move(notation, board, white = True):
                                           if coordinate != b["Queen"][key]:
                                                 blocked = True
                                     if blocked == False:
-                                          if check_king2(b["Queen"][key]) == False:
+                                          if check_king(b["Queen"][key]) == False:
                                                 b["Queen"][key] = [notation[-2], notation[-1]]
                                                 return current_board
                         if notation[-2] in b["Queen"][key] or notation[-1] in b["Queen"][key]:
@@ -255,7 +262,8 @@ def make_move(notation, board, white = True):
                                     if (coordinate[0] == b["Queen"][key][0] and int(coordinate[1]) < max(int(b["Queen"][key][1]), int(notation[-1])) and int(coordinate[1]) > min(int(b["Queen"][key][1]), int(notation[-1]))) or (coordinate[1] == b["Queen"][key][1] and ord(coordinate[0]) < max(ord(b["Queen"][key][0]), ord(notation[-2])) and ord(coordinate[0]) > min(ord(b["Queen"][key][0]), ord(notation[-2]))):
                                           blocked = True
                               if blocked == False:
-                                    if check_king2(b["Queen"][key]) == False:
+                                    #check if the Queen is protecting the king, and therefore can't be moved
+                                    if check_king(b["Queen"][key]) == False:
                                           b["Queen"][key] = [notation[-2], notation[-1]]
                                           return current_board
       #remove any additonal signs at the end of the notation
@@ -267,15 +275,12 @@ def make_move(notation, board, white = True):
             b[legend[notation[-1]]][legend[notation[-1]]+str(number)] = [notation[-4], notation[-3]]
       #player lost the game
       if notation == "0-1":
-            state = "Lost"
             return current_board
       #player won the game
       if notation == "1-0":
-            state = "Win"
             return current_board
       #player has a draw
       if notation == "1/2-1/2":
-            state = "Draw"
             return current_board
       #play the short rochade
       if notation == "O-O":
@@ -424,30 +429,6 @@ def get_data(path, white=True):
                   white = (white == False)
       return(state_list)
       
-
-
-# Malte: commented that out
-'''
-#test
-"""make_move("h4")
-make_move("e5")
-make_move("a4")
-make_move("b5")
-make_move("Rh3")
-make_move("a5")
-make_move("Raa3")
-make_move("c5")
-make_move("axb5")
-make_move("d5")
-make_move("Rxa5")
-make_move("Bb7")
-"""
-#print(board_original.items())
-
-test = get_data("/Users/franziska-marieplate/Documents/5. Semester/Python/Chess/pythonProject2023-24/chess_data/all_games/game_363.pgn")
-
-#getData("/chess_data/all_games/game_1.pgn")
-'''
 
 
 
