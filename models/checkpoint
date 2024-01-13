@@ -1,2 +1,2 @@
-model_checkpoint_path: "saved_model_Test_3_with_FIT"
-all_model_checkpoint_paths: "saved_model_Test_3_with_FIT"
+model_checkpoint_path: "saved_model_Mixed_Test_02"
+all_model_checkpoint_paths: "saved_model_Mixed_Test_02"
