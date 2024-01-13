@@ -3,16 +3,16 @@ import preprocessing
 import training_functions
 
 # PLAYING SETTINGS
-play_game = False
-play_color = "black"
-model_name = "saved_model_Mixed_Test_02"
+play_game = True
+play_color = "white"
+model_name = "saved_model_black_final"
 
 # TRAINING SETTINGS
-train_model = True
-train_color = "white"
+train_model = False
+train_color = "black"
 downloaded_games = "chess_data/downloaded_games"
 epochs = 50
-config_name = "Mixed_Test_02"
+config_name = "black_final"
 
 if play_game:
     play.play(model_name, play_color)

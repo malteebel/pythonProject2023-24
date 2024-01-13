@@ -28,7 +28,7 @@ def preprocessing(path_downloaded_games="chess_data/downloaded_games", color="bl
     """
 
     # Get relative paths of all files inside the directory
-    pgn_paths = os.listdir(path_downloaded_games)
+    pgn_paths = os.listdir(f"{path_downloaded_games}/{color}")
 
     # Define empty list
     full_content = []
@@ -36,7 +36,7 @@ def preprocessing(path_downloaded_games="chess_data/downloaded_games", color="bl
     # Iterate through all the files
     # Open them and assign all their content to a variable
     for i in range(len(pgn_paths)):
-        with open(path_downloaded_games + '/' + pgn_paths[i], 'r') as f:
+        with open(path_downloaded_games + "/" + color + "/" + pgn_paths[i], 'r') as f:
             content = f.read()
             full_content += content 
 
@@ -57,9 +57,15 @@ def preprocessing(path_downloaded_games="chess_data/downloaded_games", color="bl
     # Error handling if folder already exists
     try:
         # Create the new all_games directory
-        os.mkdir("chess_data/all_games")
+        os.mkdir(f"chess_data/all_games")
     except OSError:
         print("all_games already exists")
+
+    try:
+        # Create new directory according to the color
+        os.mkdir(f"chess_data/all_games/{color}")
+    except OSError:
+        print(f"all_games/{color} already exists")
 
 
     # Creates a file for EACH game
@@ -68,7 +74,7 @@ def preprocessing(path_downloaded_games="chess_data/downloaded_games", color="bl
         moves = separate_moves(game)
 
         # Filenames for EACH game with enumeration
-        new_path = f"chess_data/all_games/game_{i+1}.pgn"
+        new_path = f"chess_data/all_games/{color}/game_{i+1}.pgn"
 
         # Write moves of all games to DIFFERENT files called game_{i}.pgn
         with open(new_path, "w") as f:
@@ -93,7 +99,7 @@ def preprocessing(path_downloaded_games="chess_data/downloaded_games", color="bl
 
     for i in range(len(os.listdir(path))):
 
-        current_file =  f"chess_data/all_games/game_{i+1}.pgn"
+        current_file =  f"chess_data/all_games/{color}/game_{i+1}.pgn"
         # New function
         board_states = get_data(current_file)
         # Old function
