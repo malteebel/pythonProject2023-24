@@ -12,7 +12,7 @@ now merged.
 """
 
 import os
-#import tensorflow as tf
+import tensorflow as tf
 from regex_functions import separate_games, separate_moves
 from dim_functions import split_dims, merge_dims, create_datasets, states_from_pgn
 from boardstates import get_data
